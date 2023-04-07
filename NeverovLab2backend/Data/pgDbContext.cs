@@ -10,15 +10,15 @@ namespace NeverovLab2backend.Data
         {
         }
         private readonly string _pgsqlConnectionString;
-        public DbSet<Member> Members{ get; set; }
-        public DbSet<Character> Characters { get; set; }
-        public DbSet<Tale> Tales { get; set; }
-        public DbSet<Session> Sessions { get; set; }
+        public DbSet<Member> Members => Set<Member>();
+        public DbSet<Character> Characters => Set<Character>();
+        public DbSet<Tale> Tales => Set<Tale>();
+        public DbSet<Session> Sessions => Set<Session>();
 
         public pgDbContext()
         {
             _pgsqlConnectionString =
-                $"Host=localhost;"+
+                $"Server=PostgreSQL15;" +
                 $"Port=5432;"+
                 $"Database=D&Ddb;"+
                 $"Username=postgres;"+
