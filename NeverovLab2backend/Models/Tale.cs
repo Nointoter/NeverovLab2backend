@@ -1,7 +1,10 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace NeverovLab2backend.Models
 {
     public class Tale
     {
+        [Key]
         public Guid Id { get; set; }
         public string Name { get; set; }
         public int Id_Master { get; set; }
