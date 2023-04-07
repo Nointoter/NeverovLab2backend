@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "D:\\Github\\NeverovLab2backend\\NeverovLab2backend\\NeverovLab2backend.csproj": {}
+    "D:\\GitHub\\NeverovLab2backend\\NeverovLab2backend\\NeverovLab2backend.csproj": {}
   },
   "projects": {
-    "D:\\Github\\NeverovLab2backend\\NeverovLab2backend\\NeverovLab2backend.csproj": {
+    "D:\\GitHub\\NeverovLab2backend\\NeverovLab2backend\\NeverovLab2backend.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Github\\NeverovLab2backend\\NeverovLab2backend\\NeverovLab2backend.csproj",
+        "projectUniqueName": "D:\\GitHub\\NeverovLab2backend\\NeverovLab2backend\\NeverovLab2backend.csproj",
         "projectName": "NeverovLab2backend",
-        "projectPath": "D:\\Github\\NeverovLab2backend\\NeverovLab2backend\\NeverovLab2backend.csproj",
-        "packagesPath": "C:\\Users\\Bmp19\\.nuget\\packages\\",
-        "outputPath": "D:\\Github\\NeverovLab2backend\\NeverovLab2backend\\obj\\",
+        "projectPath": "D:\\GitHub\\NeverovLab2backend\\NeverovLab2backend\\NeverovLab2backend.csproj",
+        "packagesPath": "C:\\Users\\Sokol\\.nuget\\packages\\",
+        "outputPath": "D:\\GitHub\\NeverovLab2backend\\NeverovLab2backend\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\Bmp19\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Sokol\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -40,6 +40,20 @@
         "net6.0": {
           "targetAlias": "net6.0",
           "dependencies": {
+            "Microsoft.EntityFrameworkCore.SqlServer": {
+              "target": "Package",
+              "version": "[8.0.0-preview.2.23128.3, )"
+            },
+            "Microsoft.EntityFrameworkCore.Tools": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[8.0.0-preview.2.23128.3, )"
+            },
+            "Npgsql.EntityFrameworkCore.PostgreSQL": {
+              "target": "Package",
+              "version": "[8.0.0-preview.2, )"
+            },
             "Swashbuckle.AspNetCore": {
               "target": "Package",
               "version": "[6.2.3, )"
@@ -56,6 +70,24 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.AspNetCore.App.Ref",
+              "version": "[6.0.15, 6.0.15]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Host.win-x64",
+              "version": "[6.0.15, 6.0.15]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Ref",
+              "version": "[6.0.15, 6.0.15]"
+            },
+            {
+              "name": "Microsoft.WindowsDesktop.App.Ref",
+              "version": "[6.0.15, 6.0.15]"
+            }
+          ],
           "frameworkReferences": {
             "Microsoft.AspNetCore.App": {
               "privateAssets": "none"
@@ -64,7 +96,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.102\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.202\\RuntimeIdentifierGraph.json"
         }
       }
     }
