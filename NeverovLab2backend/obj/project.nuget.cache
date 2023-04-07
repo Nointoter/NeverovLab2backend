@@ -1,0 +1,15 @@
+{
+  "version": 2,
+  "dgSpecHash": "CnvteAtfZro6gt7WmCWY5bKul6jBDljtZktHwemeezxnQbMM5KIy0bqg+I9o69jNkg1iRE1WbAPU3wSxjKOaUQ==",
+  "success": true,
+  "projectFilePath": "D:\\Github\\NeverovLab2backend\\NeverovLab2backend\\NeverovLab2backend.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Bmp19\\.nuget\\packages\\microsoft.extensions.apidescription.server\\3.0.0\\microsoft.extensions.apidescription.server.3.0.0.nupkg.sha512",
+    "C:\\Users\\Bmp19\\.nuget\\packages\\microsoft.openapi\\1.2.3\\microsoft.openapi.1.2.3.nupkg.sha512",
+    "C:\\Users\\Bmp19\\.nuget\\packages\\swashbuckle.aspnetcore\\6.2.3\\swashbuckle.aspnetcore.6.2.3.nupkg.sha512",
+    "C:\\Users\\Bmp19\\.nuget\\packages\\swashbuckle.aspnetcore.swagger\\6.2.3\\swashbuckle.aspnetcore.swagger.6.2.3.nupkg.sha512",
+    "C:\\Users\\Bmp19\\.nuget\\packages\\swashbuckle.aspnetcore.swaggergen\\6.2.3\\swashbuckle.aspnetcore.swaggergen.6.2.3.nupkg.sha512",
+    "C:\\Users\\Bmp19\\.nuget\\packages\\swashbuckle.aspnetcore.swaggerui\\6.2.3\\swashbuckle.aspnetcore.swaggerui.6.2.3.nupkg.sha512"
+  ],
+  "logs": []
+}

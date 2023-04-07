@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\NeverovLab2backend.props" />
+</Project>
