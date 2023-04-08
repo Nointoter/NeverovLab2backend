@@ -15,7 +15,7 @@ public class CharactersController : Controller
     }
     // GET: api/<CharactersController>
     [HttpGet]
-    [Route("api/[controller]/GetCharacters")]
+    [Route("GetCharacters")]
     public IActionResult Get()
     {
         ResponseType type = ResponseType.Success;
@@ -36,7 +36,7 @@ public class CharactersController : Controller
 
     // GET api/<CharactersController>/5
     [HttpGet]
-    [Route("api/[controller]/GetCharacterById/{id}")]
+    [Route("GetCharacterById/{id}")]
     public IActionResult Get(int id)
     {
         ResponseType type = ResponseType.Success;
@@ -58,7 +58,7 @@ public class CharactersController : Controller
 
     // POST api/<CharactersController>
     [HttpPost]
-    [Route("api/[controller]/SaveCharacter")]
+    [Route("SaveCharacter")]
     public IActionResult Post([FromBody] CharacterModel model)
     {
         try
@@ -75,7 +75,7 @@ public class CharactersController : Controller
 
     // PUT api/<CharactersController>/5
     [HttpPut]
-    [Route("api/[controller]/UpdateCharacter")]
+    [Route("UpdateCharacter")]
     public IActionResult Put([FromBody] CharacterModel model)
     {
 
@@ -93,7 +93,7 @@ public class CharactersController : Controller
 
     // DELETE api/<CharactersController>/5
     [HttpDelete]
-    [Route("api/[controller]/DeleteCharacter/{id}")]
+    [Route("DeleteCharacter/{id}")]
     public IActionResult Delete(int id)
     {
         try
