@@ -24,12 +24,14 @@ namespace NeverovLab2backend.Migrations
 
             modelBuilder.Entity("NeverovLab2backend.Data.Character", b =>
                 {
-                    b.Property<Guid?>("Id")
+                    b.Property<int?>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("integer");
 
-                    b.Property<string>("Gender")
-                        .HasColumnType("text");
+                    NpgsqlPropertyBuilderExtensions.UseSerialColumn(b.Property<int?>("Id"));
+
+                    b.Property<int?>("Gender")
+                        .HasColumnType("integer");
 
                     b.Property<int?>("Id_Member")
                         .HasColumnType("integer");
@@ -47,9 +49,11 @@ namespace NeverovLab2backend.Migrations
 
             modelBuilder.Entity("NeverovLab2backend.Data.Member", b =>
                 {
-                    b.Property<Guid?>("Id")
+                    b.Property<int?>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseSerialColumn(b.Property<int?>("Id"));
 
                     b.Property<string>("Name")
                         .HasColumnType("text");
@@ -67,9 +71,11 @@ namespace NeverovLab2backend.Migrations
 
             modelBuilder.Entity("NeverovLab2backend.Data.Session", b =>
                 {
-                    b.Property<Guid?>("Id_Tale")
+                    b.Property<int?>("Id_Tale")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseSerialColumn(b.Property<int?>("Id_Tale"));
 
                     b.Property<int?>("Id_Character")
                         .HasColumnType("integer");
@@ -81,9 +87,11 @@ namespace NeverovLab2backend.Migrations
 
             modelBuilder.Entity("NeverovLab2backend.Data.Tale", b =>
                 {
-                    b.Property<Guid?>("Id")
+                    b.Property<int?>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseSerialColumn(b.Property<int?>("Id"));
 
                     b.Property<int?>("Id_Master")
                         .HasColumnType("integer");
