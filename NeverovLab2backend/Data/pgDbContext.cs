@@ -1,35 +1,32 @@
 using Microsoft.EntityFrameworkCore;
-using NeverovLab2backend.Models;
 
-namespace NeverovLab2backend.Data
+namespace NeverovLab2backend.Data;
+
+public class pgDbContext : DbContext
 {
-
-    public class pgDbContext : Microsoft.EntityFrameworkCore.DbContext
+    public pgDbContext(DbContextOptions<pgDbContext> options) : base(options) { }
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        public pgDbContext(DbContextOptions options) : base(options)
-        {
-        }
-        private readonly string _pgsqlConnectionString;
-        public DbSet<Member> Members => Set<Member>();
-        public DbSet<Character> Characters => Set<Character>();
-        public DbSet<Tale> Tales => Set<Tale>();
-        public DbSet<Session> Sessions => Set<Session>();
-
-        public pgDbContext()
-        {
-            _pgsqlConnectionString =
-                $"Server=PostgreSQL15;" +
-                $"Port=5432;"+
-                $"Database=D&Ddb;"+
-                $"Username=postgres;"+
-                $"Password=postgres";
-            Database.EnsureCreated();
-        }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.UseNpgsql(_pgsqlConnectionString);
-
-        }
+        modelBuilder.UseSerialColumns();
+    }
+    public DbSet<Member> Members
+    {
+        get;
+        set;
+    }
+    public DbSet<Character> Characters
+    {
+        get;
+        set;
+    }
+    public DbSet<Tale> Tales
+    {
+        get;
+        set;
+    }
+    public DbSet<Session> Sessions
+    {
+        get;
+        set;
     }
 }

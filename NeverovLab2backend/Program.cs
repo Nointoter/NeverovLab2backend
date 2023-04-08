@@ -10,7 +10,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddDbContext<pgDbContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("Server=PostgreSQL15;Port=5432;Database=D&Ddb;Username=postgres;Password=postgres")));
+builder.Services.AddDbContext<pgDbContext>(o => o.UseNpgsql(builder.Configuration.GetConnectionString("pg_Db")));
 
 var app = builder.Build();
 
