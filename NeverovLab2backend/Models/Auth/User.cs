@@ -1,4 +1,4 @@
-namespace NeverovLab2backend.Data;
+﻿namespace NeverovLab2backend.Models.Auth;
 
 public class User
 {

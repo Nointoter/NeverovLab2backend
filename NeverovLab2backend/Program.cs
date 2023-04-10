@@ -1,14 +1,13 @@
+global using NeverovLab2backend.Services.UserService;
 using NeverovLab2backend.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using NeverovLab2backend.Service;
 using System.Text;
 using Swashbuckle.AspNetCore.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
-var config = builder.Configuration;
 // Add services to the container.
 
 builder.Services.AddControllers();
@@ -52,13 +51,13 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
-
 app.UseCors(builder => builder
 .AllowAnyHeader()
 .AllowAnyMethod()
 .SetIsOriginAllowed((host) => true)
 .AllowCredentials());
+
+app.UseHttpsRedirection();
 
 app.UseAuthorization();
 

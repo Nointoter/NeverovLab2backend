@@ -3,10 +3,11 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using NeverovLab2backend.Data;
+using NeverovLab2backend.Models.Auth;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
-using NeverovLab2backend.Service;
+using User = NeverovLab2backend.Models.Auth.User;
 
 namespace NeverovLab2backend.Controllers
 {
@@ -30,13 +31,13 @@ namespace NeverovLab2backend.Controllers
             var userName = _userService.GetMyName();
             return Ok(userName);
         }
-        //Метод для регистрации
-        [HttpPost("register")]
-        public async Task<ActionResult<User>> Register(Member request)
-        {
-            CreatePasswordHash(request.password, out byte[] passwordHash, out byte[] passwordSalt);
 
-            user.Username = request.login;
+        [HttpPost("register")]
+        public async Task<ActionResult<User>> Register(UserDto request)
+        {
+            CreatePasswordHash(request.Password, out byte[] passwordHash, out byte[] passwordSalt);
+
+            user.Username = request.Username;
             user.PasswordHash = passwordHash;
             user.PasswordSalt = passwordSalt;
 
@@ -44,28 +45,28 @@ namespace NeverovLab2backend.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<ActionResult<string>> Login(Member request)
+        public async Task<ActionResult<string>> Login(UserDto request)
         {
-            if (user.Username != request.login)
+            if (user.Username != request.Username)
             {
                 return BadRequest("User not found.");
             }
 
-            if (!VerifyPasswordHash(request.password, user.PasswordHash, user.PasswordSalt))
+            if (!VerifyPasswordHash(request.Password, user.PasswordHash, user.PasswordSalt))
             {
                 return BadRequest("Wrong password.");
             }
 
             string token = CreateToken(user);
 
-            //var refreshToken = GenerateRefreshToken();
-            //SetRefreshToken(refreshToken);
+            var refreshToken = GenerateRefreshToken();
+            SetRefreshToken(refreshToken);
 
             return Ok(token);
         }
 
         [HttpPost("refresh-token")]
-        /*public async Task<ActionResult<string>> RefreshToken()
+        public async Task<ActionResult<string>> RefreshToken()
         {
             var refreshToken = Request.Cookies["refreshToken"];
 
@@ -109,7 +110,7 @@ namespace NeverovLab2backend.Controllers
             user.RefreshToken = newRefreshToken.Token;
             user.TokenCreated = newRefreshToken.Created;
             user.TokenExpires = newRefreshToken.Expires;
-        }*/
+        }
 
         private string CreateToken(User user)
         {
