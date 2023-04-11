@@ -29,13 +29,6 @@ namespace NeverovLab2backend.Controllers
             _db = new DBHelper(pgDbContext);
         }
 
-        [HttpGet, Authorize]
-        public ActionResult<string> GetMe()
-        {
-            var userName = _userService.GetMyName();
-            return Ok(userName);
-        }
-
         [HttpPost("register")]
         public async Task<ActionResult<UserModel>> Register(UserDto request)
         {
@@ -77,14 +70,11 @@ namespace NeverovLab2backend.Controllers
         }
 
         [HttpPost("refresh-token")]
-        public async Task<ActionResult<string>> RefreshToken(string token)
+        public async Task<ActionResult<string>> RefreshToken(string refreshToken)
         {
-            UserModel user = new UserModel();
-            
+            UserModel user = _db.GetUserByRefreshToken(refreshToken);
 
-            var refreshToken = Request.Cookies["refreshToken"];
-
-            if (!user.RefreshToken.Equals(refreshToken))
+            if (user == null)
             {
                 return Unauthorized("Invalid Refresh Token.");
             }
@@ -93,12 +83,13 @@ namespace NeverovLab2backend.Controllers
                 return Unauthorized("Token expired.");
             }
 
-            token = CreateToken(user);
+            user.Token = CreateToken(user);
+
             var newRefreshToken = GenerateRefreshToken();
             user = SetRefreshToken(newRefreshToken, user);
             _db.SaveUser(user);
 
-            return Ok(token);
+            return Ok(user.Token);
         }
 
         private RefreshToken GenerateRefreshToken()
@@ -106,7 +97,7 @@ namespace NeverovLab2backend.Controllers
             var refreshToken = new RefreshToken
             {
                 Token = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64)),
-                Expires = DateTime.Now.AddDays(7),
+                Expires = DateTime.Now.AddMinutes(30),
                 Created = DateTime.Now
             };
 

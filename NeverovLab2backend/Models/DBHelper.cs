@@ -37,6 +37,22 @@ public class DBHelper
         }
     }
 
+    public UserModel GetUserByRefreshToken(string refreshToken)
+    {
+        var row = _context.Users.Where(d => d.RefreshToken.Equals(refreshToken)).FirstOrDefault();
+        return new UserModel()
+        {
+            Id = row.Id,
+            Username = row.Username,
+            PasswordHash = row.PasswordHash,
+            PasswordSalt = row.PasswordSalt,
+            Token = row.Token,
+            RefreshToken = row.RefreshToken,
+            TokenCreated = row.TokenCreated,
+            TokenExpires = row.TokenExpires,
+        };
+    }
+    
     public UserModel GetUserByToken(string token)
     {
         var row = _context.Users.Where(d => d.Token.Equals(token)).FirstOrDefault();
