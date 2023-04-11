@@ -14,6 +14,28 @@ public class DBHelper
     {
         _context = context;
     }
+    public List<SessionModel> GetSession()
+    {
+        List<SessionModel> response = new List<SessionModel>();
+        var dataList = _context.Sessions.ToList();
+        dataList.ForEach(row => response.Add(new SessionModel()
+        {
+            Id_Tale = row.Id_Tale,
+            Id_Character = row.Id_Character
+           
+        }));
+        return response;
+    }
+
+    public void DeleteSessionCharacter(int id)
+    {
+        var order = _context.Sessions.Where(d => d.Id_Character.Equals(id)).FirstOrDefault();
+        if (order != null)
+        {
+            _context.Sessions.Remove(order);
+            _context.SaveChanges();
+        }
+    }
 
     public UserModel GetUserByToken(string token)
     {
