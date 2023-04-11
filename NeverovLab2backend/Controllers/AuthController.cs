@@ -67,6 +67,7 @@ namespace NeverovLab2backend.Controllers
             }
 
             string token = CreateToken(user);
+            user.Token = token;
 
             var refreshToken = GenerateRefreshToken();
             user = SetRefreshToken(refreshToken, user);
@@ -87,7 +88,7 @@ namespace NeverovLab2backend.Controllers
             {
                 return Unauthorized("Invalid Refresh Token.");
             }
-            else if(user.TokenExpires < DateTime.Now)
+            else if(Convert.ToDateTime(user.TokenExpires) < DateTime.Now)
             {
                 return Unauthorized("Token expired.");
             }
@@ -123,8 +124,8 @@ namespace NeverovLab2backend.Controllers
             Response.Cookies.Append("refreshToken", newRefreshToken.Token, cookieOptions);
 
             user.RefreshToken = newRefreshToken.Token;
-            user.TokenCreated = newRefreshToken.Created;
-            user.TokenExpires = newRefreshToken.Expires;
+            user.TokenCreated = Convert.ToString(newRefreshToken.Created);
+            user.TokenExpires = Convert.ToString(newRefreshToken.Expires);
             return (user);
         }
 

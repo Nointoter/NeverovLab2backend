@@ -81,16 +81,20 @@ public class DBHelper
         if (userModel.Id > 0)
         {
             //PUT
-            var row = _context.Users.Where(d => d.Username.Equals(userModel.Id)).FirstOrDefault();
+            dbTable = _context.Users.Where(d => d.Id.Equals(userModel.Id)).FirstOrDefault();
             if (dbTable != null)
             {
-                dbTable.Username = row.Username;
-                dbTable.PasswordHash = row.PasswordHash;
-                dbTable.PasswordSalt = row.PasswordSalt;
-                dbTable.Token = row.Token;
-                dbTable.RefreshToken = row.RefreshToken;
-                dbTable.TokenCreated = row.TokenCreated;
-                dbTable.TokenExpires = row.TokenExpires;
+
+                dbTable.Id = userModel.Id;
+                dbTable.Username = userModel.Username;
+                dbTable.PasswordHash = userModel.PasswordHash;
+                dbTable.PasswordSalt = userModel.PasswordSalt;
+                dbTable.Token = userModel.Token;
+                dbTable.RefreshToken = userModel.RefreshToken;
+                dbTable.TokenCreated = userModel.TokenCreated;
+                dbTable.TokenExpires = userModel.TokenExpires;
+                //_context.Users.Remove(dbTable);
+                //_context.Users.Update(dbTable);
             }
         }
         else
