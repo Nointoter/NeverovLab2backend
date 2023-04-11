@@ -1,4 +1,6 @@
-﻿using NeverovLab2backend.Data;
+﻿using Microsoft.AspNetCore.Identity;
+using NeverovLab2backend.Data;
+using NeverovLab2backend.Models.Auth;
 using System.Diagnostics;
 using System.Reflection;
 using System.Xml.Linq;
@@ -12,6 +14,60 @@ public class DBHelper
     {
         _context = context;
     }
+    /// <summary>
+    /// GET
+    /// </summary>
+    /// <returns></returns>
+    public UserModel GetUserByUserName(string username)
+    {
+        var row = _context.Users.Where(d => d.Username.Equals(username)).FirstOrDefault();
+        return new UserModel()
+        {
+            Id= row.Id,
+            Username = row.Username,
+            PasswordHash= row.PasswordHash,
+            PasswordSalt= row.PasswordSalt,
+            RefreshToken= row.RefreshToken,
+            TokenCreated= row.TokenCreated,
+            TokenExpires= row.TokenExpires,
+        };
+    }
+    /// <summary>
+    /// It serves the POST/PUT/PATCH
+    /// </summary>
+    public void SaveUser(UserModel userModel)
+    {
+        User dbTable = new User();
+
+        if (userModel.Id > 0)
+        {
+            //PUT
+            var row = _context.Users.Where(d => d.Username.Equals(userModel.Id)).FirstOrDefault();
+            if (dbTable != null)
+            {
+                dbTable.Username = row.Username;
+                dbTable.PasswordHash = row.PasswordHash;
+                dbTable.PasswordSalt = row.PasswordSalt;
+                dbTable.RefreshToken = row.RefreshToken;
+                dbTable.TokenCreated = row.TokenCreated;
+                dbTable.TokenExpires = row.TokenExpires;
+            }
+        }
+        else
+        {
+            //POST
+            dbTable.Username = userModel.Username;
+            dbTable.PasswordHash = userModel.PasswordHash;
+            dbTable.PasswordSalt = userModel.PasswordSalt;
+            dbTable.RefreshToken = userModel.RefreshToken;
+            dbTable.TokenCreated = userModel.TokenCreated;
+            dbTable.TokenExpires = userModel.TokenExpires;
+            _context.Users.Add(dbTable);
+        }
+
+        _context.SaveChanges();
+    }
+
     /// <summary>
     /// GET
     /// </summary>

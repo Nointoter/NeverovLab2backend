@@ -78,7 +78,6 @@ public class CharactersController : Controller
     [Route("UpdateCharacter")]
     public IActionResult Put([FromBody] CharacterModel model)
     {
-
         try
         {
             ResponseType type = ResponseType.Success;
