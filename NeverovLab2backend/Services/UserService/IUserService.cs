@@ -1,4 +1,4 @@
-namespace NeverovLab2backend.Services.UserService;
+﻿namespace NeverovLab2backend.Services.UserService;
 
 public interface IUserService
 {

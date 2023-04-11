@@ -1,13 +1,12 @@
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
-using NeverovLab2backend.Data;
 using NeverovLab2backend.Models.Auth;
+using NeverovLab2backend.Services.UserService;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
-using User = NeverovLab2backend.Models.Auth.User;
 
 namespace NeverovLab2backend.Controllers
 {
@@ -15,7 +14,7 @@ namespace NeverovLab2backend.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        public static User user = new User();
+        public static UserModel user = new UserModel();
         private readonly IConfiguration _configuration;
         private readonly IUserService _userService;
 
@@ -33,7 +32,7 @@ namespace NeverovLab2backend.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<ActionResult<User>> Register(UserDto request)
+        public async Task<ActionResult<UserModel>> Register(UserDto request)
         {
             CreatePasswordHash(request.Password, out byte[] passwordHash, out byte[] passwordSalt);
 
@@ -74,7 +73,7 @@ namespace NeverovLab2backend.Controllers
             {
                 return Unauthorized("Invalid Refresh Token.");
             }
-            else if (user.TokenExpires < DateTime.Now)
+            else if(user.TokenExpires < DateTime.Now)
             {
                 return Unauthorized("Token expired.");
             }
@@ -112,7 +111,7 @@ namespace NeverovLab2backend.Controllers
             user.TokenExpires = newRefreshToken.Expires;
         }
 
-        private string CreateToken(User user)
+        private string CreateToken(UserModel user)
         {
             List<Claim> claims = new List<Claim>
             {
