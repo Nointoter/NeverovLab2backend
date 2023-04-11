@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using NeverovLab2backend.Data;
+using NeverovLab2backend.Models;
 using NeverovLab2backend.Models.Auth;
 using NeverovLab2backend.Services.UserService;
 using System.IdentityModel.Tokens.Jwt;
@@ -14,14 +16,17 @@ namespace NeverovLab2backend.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        public static UserModel user = new UserModel();
+        //public static UserModel user = new UserModel();
         private readonly IConfiguration _configuration;
         private readonly IUserService _userService;
 
-        public AuthController(IConfiguration configuration, IUserService userService)
+        private readonly DBHelper _db;
+
+        public AuthController(IConfiguration configuration, IUserService userService, pgDbContext pgDbContext)
         {
             _configuration = configuration;
             _userService = userService;
+            _db = new DBHelper(pgDbContext);
         }
 
         [HttpGet, Authorize]
@@ -34,11 +39,14 @@ namespace NeverovLab2backend.Controllers
         [HttpPost("register")]
         public async Task<ActionResult<UserModel>> Register(UserDto request)
         {
+            UserModel user = new UserModel();
             CreatePasswordHash(request.Password, out byte[] passwordHash, out byte[] passwordSalt);
-
+            user.Id = 0;
             user.Username = request.Username;
             user.PasswordHash = passwordHash;
             user.PasswordSalt = passwordSalt;
+            _db.SaveUser(user);
+            //Занести данные в таблицу User(UserModel), UserDto c помощью dbHelper
 
             return Ok(user);
         }
@@ -46,27 +54,33 @@ namespace NeverovLab2backend.Controllers
         [HttpPost("login")]
         public async Task<ActionResult<string>> Login(UserDto request)
         {
+            UserModel user =  _db.GetUserByUserName(request.Username);
+            
             if (user.Username != request.Username)
             {
-                return BadRequest("User not found.");
+                return BadRequest("Введён неверный логин или пароль.");
             }
-
+            
             if (!VerifyPasswordHash(request.Password, user.PasswordHash, user.PasswordSalt))
             {
-                return BadRequest("Wrong password.");
+                return BadRequest("Введён неверный логин или пароль.");
             }
 
             string token = CreateToken(user);
 
             var refreshToken = GenerateRefreshToken();
-            SetRefreshToken(refreshToken);
+            user = SetRefreshToken(refreshToken, user);
+            _db.SaveUser(user);
 
             return Ok(token);
         }
 
         [HttpPost("refresh-token")]
-        public async Task<ActionResult<string>> RefreshToken()
+        public async Task<ActionResult<string>> RefreshToken(string token)
         {
+            UserModel user = new UserModel();
+            
+
             var refreshToken = Request.Cookies["refreshToken"];
 
             if (!user.RefreshToken.Equals(refreshToken))
@@ -78,9 +92,10 @@ namespace NeverovLab2backend.Controllers
                 return Unauthorized("Token expired.");
             }
 
-            string token = CreateToken(user);
+            token = CreateToken(user);
             var newRefreshToken = GenerateRefreshToken();
-            SetRefreshToken(newRefreshToken);
+            user = SetRefreshToken(newRefreshToken, user);
+            _db.SaveUser(user);
 
             return Ok(token);
         }
@@ -97,8 +112,9 @@ namespace NeverovLab2backend.Controllers
             return refreshToken;
         }
 
-        private void SetRefreshToken(RefreshToken newRefreshToken)
+        private UserModel SetRefreshToken(RefreshToken newRefreshToken, UserModel user)
         {
+
             var cookieOptions = new CookieOptions
             {
                 HttpOnly = true,
@@ -109,6 +125,7 @@ namespace NeverovLab2backend.Controllers
             user.RefreshToken = newRefreshToken.Token;
             user.TokenCreated = newRefreshToken.Created;
             user.TokenExpires = newRefreshToken.Expires;
+            return (user);
         }
 
         private string CreateToken(UserModel user)

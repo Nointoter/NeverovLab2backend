@@ -14,6 +14,22 @@ public class DBHelper
     {
         _context = context;
     }
+
+    public UserModel GetUserByToken(string token)
+    {
+        var row = _context.Users.Where(d => d.Token.Equals(token)).FirstOrDefault();
+        return new UserModel()
+        {
+            Id = row.Id,
+            Username = row.Username,
+            PasswordHash = row.PasswordHash,
+            PasswordSalt = row.PasswordSalt,
+            Token = row.Token,
+            RefreshToken = row.RefreshToken,
+            TokenCreated = row.TokenCreated,
+            TokenExpires = row.TokenExpires,
+        };
+    }
     /// <summary>
     /// GET
     /// </summary>
@@ -27,7 +43,8 @@ public class DBHelper
             Username = row.Username,
             PasswordHash= row.PasswordHash,
             PasswordSalt= row.PasswordSalt,
-            RefreshToken= row.RefreshToken,
+            Token = row.Token,
+            RefreshToken = row.RefreshToken,
             TokenCreated= row.TokenCreated,
             TokenExpires= row.TokenExpires,
         };
@@ -48,6 +65,7 @@ public class DBHelper
                 dbTable.Username = row.Username;
                 dbTable.PasswordHash = row.PasswordHash;
                 dbTable.PasswordSalt = row.PasswordSalt;
+                dbTable.Token = row.Token;
                 dbTable.RefreshToken = row.RefreshToken;
                 dbTable.TokenCreated = row.TokenCreated;
                 dbTable.TokenExpires = row.TokenExpires;
@@ -59,6 +77,7 @@ public class DBHelper
             dbTable.Username = userModel.Username;
             dbTable.PasswordHash = userModel.PasswordHash;
             dbTable.PasswordSalt = userModel.PasswordSalt;
+            dbTable.Token = userModel.Token;
             dbTable.RefreshToken = userModel.RefreshToken;
             dbTable.TokenCreated = userModel.TokenCreated;
             dbTable.TokenExpires = userModel.TokenExpires;
