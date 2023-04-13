@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.Net.Http.Headers;
 using NeverovLab2backend.Data;
 using NeverovLab2backend.Models;
 using NeverovLab2backend.Models.Auth;
@@ -72,6 +73,7 @@ namespace NeverovLab2backend.Controllers
         [HttpPost("refresh-token")]
         public async Task<ActionResult<string>> RefreshToken(string refreshToken)
         {
+            var accessToken = Request.Headers[HeaderNames.Authorization];
             UserModel user = _db.GetUserByRefreshToken(refreshToken);
 
             if (user == null)
@@ -106,7 +108,6 @@ namespace NeverovLab2backend.Controllers
 
         private UserModel SetRefreshToken(RefreshToken newRefreshToken, UserModel user)
         {
-
             var cookieOptions = new CookieOptions
             {
                 HttpOnly = true,
