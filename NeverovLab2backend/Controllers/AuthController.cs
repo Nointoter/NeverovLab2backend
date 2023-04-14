@@ -1,165 +1,59 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using NeverovLab2backend.Models;
+using NeverovLab2backend.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.Net.Http.Headers;
-using NeverovLab2backend.Data;
-using NeverovLab2backend.Models;
-using NeverovLab2backend.Models.Auth;
-using NeverovLab2backend.Services.UserService;
-using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Security.Cryptography;
+using NeverovLab2backend.Data;
+using System;
+using Microsoft.EntityFrameworkCore;
+using NeverovLab2backend.Models.Auth;
 
-namespace NeverovLab2backend.Controllers
+namespace NeverovLab2backend.Controllers;
+
+[Route("api/[controller]")]
+[ApiController]
+public class AuthController : ControllerBase
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class AuthController : ControllerBase
+    private readonly DBHelper _db;
+    private readonly pgDbContext _dbContext;
+    private readonly ITokenService _tokenService;
+
+    public AuthController(pgDbContext pgDbContext, ITokenService tokenService)
     {
-        //public static UserModel user = new UserModel();
-        private readonly IConfiguration _configuration;
-        private readonly IUserService _userService;
+        _db = new DBHelper(pgDbContext);
+        _dbContext = pgDbContext;
+        _tokenService = tokenService ?? throw new ArgumentNullException(nameof(tokenService));
+    }
 
-        private readonly DBHelper _db;
-
-        public AuthController(IConfiguration configuration, IUserService userService, pgDbContext pgDbContext)
+    [HttpPost, Route("login")]
+    public IActionResult Login([FromBody] UserDto loginModel)
+    {
+        if (loginModel is null)
         {
-            _configuration = configuration;
-            _userService = userService;
-            _db = new DBHelper(pgDbContext);
+            return BadRequest("Invalid client request");
         }
+        /*
+        var user = _dbContext.Users.FirstOrDefault(u => 
+            (u.UserName == loginModel.UserName) && (u.Password == loginModel.Password));
+        if (user is null)
+            return Unauthorized();
 
-        [HttpPost("register")]
-        public async Task<ActionResult<UserModel>> Register(UserDto request)
+        var claims = new List<Claim>
         {
-            UserModel user = new UserModel();
-            CreatePasswordHash(request.Password, out byte[] passwordHash, out byte[] passwordSalt);
-            user.Id = 0;
-            user.Username = request.Username;
-            user.PasswordHash = passwordHash;
-            user.PasswordSalt = passwordSalt;
-            _db.SaveUser(user);
-            //Занести данные в таблицу User(UserModel), UserDto c помощью dbHelper
+            new Claim(ClaimTypes.Name, loginModel.UserName),
+            new Claim(ClaimTypes.Role, "Manager")
+        };
+        var accessToken = _tokenService.GenerateAccessToken(claims);
+        var refreshToken = _tokenService.GenerateRefreshToken();
 
-            return Ok(user);
-        }
+        user.RefreshToken = refreshToken;
+        user.RefreshTokenExpiryTime = DateTime.Now.AddDays(7);
 
-        [HttpPost("login")]
-        public async Task<ActionResult<string>> Login(UserDto request)
+        _dbContext.SaveChanges();*/
+
+        return Ok(new AuthenticatedResponse
         {
-            UserModel user =  _db.GetUserByUserName(request.Username);
-            
-            if (user.Username != request.Username)
-            {
-                return BadRequest("Введён неверный логин или пароль.");
-            }
-            
-            if (!VerifyPasswordHash(request.Password, user.PasswordHash, user.PasswordSalt))
-            {
-                return BadRequest("Введён неверный логин или пароль.");
-            }
-
-            string token = CreateToken(user);
-            user.Token = token;
-
-            var refreshToken = GenerateRefreshToken();
-            user = SetRefreshToken(refreshToken, user);
-            _db.SaveUser(user);
-
-            return Ok(token);
-        }
-
-        [HttpPost("refresh-token")]
-        public async Task<ActionResult<string>> RefreshToken(string refreshToken)
-        {
-            var accessToken = Request.Headers[HeaderNames.Authorization];
-            UserModel user = _db.GetUserByRefreshToken(refreshToken);
-
-            if (user == null)
-            {
-                return Unauthorized("Invalid Refresh Token.");
-            }
-            else if(Convert.ToDateTime(user.TokenExpires) < DateTime.Now)
-            {
-                return Unauthorized("Token expired.");
-            }
-
-            user.Token = CreateToken(user);
-
-            var newRefreshToken = GenerateRefreshToken();
-            user = SetRefreshToken(newRefreshToken, user);
-            _db.SaveUser(user);
-
-            return Ok(user.Token);
-        }
-
-        private RefreshToken GenerateRefreshToken()
-        {
-            var refreshToken = new RefreshToken
-            {
-                Token = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64)),
-                Expires = DateTime.Now.AddMinutes(30),
-                Created = DateTime.Now
-            };
-
-            return refreshToken;
-        }
-
-        private UserModel SetRefreshToken(RefreshToken newRefreshToken, UserModel user)
-        {
-            var cookieOptions = new CookieOptions
-            {
-                HttpOnly = true,
-                Expires = newRefreshToken.Expires
-            };
-            Response.Cookies.Append("refreshToken", newRefreshToken.Token, cookieOptions);
-
-            user.RefreshToken = newRefreshToken.Token;
-            user.TokenCreated = Convert.ToString(newRefreshToken.Created);
-            user.TokenExpires = Convert.ToString(newRefreshToken.Expires);
-            return (user);
-        }
-
-        private string CreateToken(UserModel user)
-        {
-            List<Claim> claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.Name, user.Username),
-                new Claim(ClaimTypes.Role, "Admin")
-            };
-
-            var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(
-                _configuration.GetSection("AppSettings:Token").Value));
-
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
-
-            var token = new JwtSecurityToken(
-                claims: claims,
-                expires: DateTime.Now.AddDays(1),
-                signingCredentials: creds);
-
-            var jwt = new JwtSecurityTokenHandler().WriteToken(token);
-
-            return jwt;
-        }
-
-        private void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
-        {
-            using (var hmac = new HMACSHA512())
-            {
-                passwordSalt = hmac.Key;
-                passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
-            }
-        }
-
-        private bool VerifyPasswordHash(string password, byte[] passwordHash, byte[] passwordSalt)
-        {
-            using (var hmac = new HMACSHA512(passwordSalt))
-            {
-                var computedHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
-                return computedHash.SequenceEqual(passwordHash);
-            }
-        }
+            Token = "",
+            RefreshToken = ""
+        });
     }
 }
