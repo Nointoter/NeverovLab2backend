@@ -231,25 +231,19 @@ public class DBHelper
             _context.SaveChanges();
         }
     }
-    public List<TaleModel> GetTaleByIdMaster(int id_master)
+    public TaleModel GetTaleByIdMaster(int id_master)
     {
-        List<TaleModel> taleModel = new List<TaleModel>();
-        var dataList = _context.Tales.ToList();       
-        foreach (var row in dataList)
+        TaleModel response = new TaleModel();
+        var row = _context.Tales.Where(d => d.Id_Master.Equals(id_master)).FirstOrDefault();
+        return new TaleModel()
         {
-            if(row.Id_Master ==id_master)
-            {
-                taleModel.Add(new TaleModel()
-                {
-                    Id = row.Id,
-                    Name = row.Name,
-                    Id_Master = row.Id_Master,
-                    count_parties = row.count_parties,
-                    Start_Tale = row.Start_Tale
-                });
-            }
-        }
-        return taleModel;
+            Id = row.Id,
+            Name = row.Name,
+            Id_Master = row.Id_Master,
+            count_parties = row.count_parties,
+            Start_Tale = row.Start_Tale
+        };
+        
     }
 
     public List<TaleModel> GetAllTales()
@@ -293,26 +287,26 @@ public class DBHelper
         }
     }
     /// <summary>
-    /// ПЕРЕДЕЛАТЬ
+    /// Вывод игроков на экран
     /// </summary>
     /// <param name="id_tale"></param>
     /// <returns></returns>
-    public List<SessionModel> GetAllCharacterByIdTale(int id_tale)
+    public List<CharacterModel> GetAllCharacterByIdTale(int id_tale)
     {
-        List<SessionModel> sessionModel = new List<SessionModel>();
+        List<CharacterModel> CharacterModel = new List<CharacterModel>();
         var dataList = _context.Sessions.ToList();
         foreach (var row in dataList)
         {
             if (row.Id_Tale == id_tale)
             {
-                sessionModel.Add(new SessionModel()
+                var character = _context.Characters.Where(d => d.Id.Equals(row.Id_Character)).FirstOrDefault();
+                CharacterModel.Add(new CharacterModel()
                 {
-                    Id_Character = row.Id_Character,
-      
-                    
-                });
+                    Name = character.Name,
+                    Race = character.Race
+                }) ;
             }
         }
-        return sessionModel;
+        return CharacterModel;
     }
 }
