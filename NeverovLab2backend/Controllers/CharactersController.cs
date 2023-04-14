@@ -88,10 +88,12 @@ public class CharactersController : Controller
     // POST api/<CharactersController>
     [HttpPost]
     [Route("SaveCharacter")]
-    public IActionResult Post([FromBody] CharacterModel model)
+    public IActionResult Post([FromBody] CharacterModel model, string token)
     {
         try
         {
+            User user = _db.GetUserByToken(token);
+            model.Id_Member = user.Id;
             ResponseType type = ResponseType.Success;
             _db.SaveCharacter(model);
             return Ok(ResponseHandler.GetAppResponse(type, model));

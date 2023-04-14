@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using NeverovLab2backend.Data;
 using NeverovLab2backend.Models.Auth;
 using System.Diagnostics;
@@ -184,7 +185,10 @@ public class DBHelper
             _context.SaveChanges();
         }
     }
-
+    /// <summary>
+    /// POST/PUT
+    /// </summary>
+    /// <param name="taleModel"></param>
     public void SaveTale(TaleModel taleModel)
     {
         Tale dbTable = new Tale();
@@ -216,5 +220,50 @@ public class DBHelper
         }
 
         _context.SaveChanges();
+    }
+    //DELETE
+    public void DeleteTale(int id)
+    {
+        var row = _context.Tales.Where(d => d.Id.Equals(id)).FirstOrDefault();
+        if (row != null)
+        {
+            _context.Tales.Remove(row);
+            _context.SaveChanges();
+        }
+    }
+    public List<TaleModel> GetTaleByIdMaster(int id_master)
+    {
+        List<TaleModel> taleModel = new List<TaleModel>();
+        var dataList = _context.Tales.ToList();       
+        foreach (var row in dataList)
+        {
+            if(row.Id_Master ==id_master)
+            {
+                taleModel.Add(new TaleModel()
+                {
+                    Id = row.Id,
+                    Name = row.Name,
+                    Id_Master = row.Id_Master,
+                    count_parties = row.count_parties,
+                    Start_Tale = row.Start_Tale
+                });
+            }
+        }
+        return taleModel;
+    }
+
+    public List<TaleModel> GetAllTales()
+    {
+        List<TaleModel> response = new List<TaleModel>();
+        var dataList = _context.Tales.ToList();
+        dataList.ForEach(row => response.Add(new TaleModel()
+        {
+            Id = row.Id,
+            Name = row.Name,
+            Id_Master = row.Id_Master,
+            count_parties = row.count_parties,
+            Start_Tale = row.Start_Tale
+        }));
+        return response;
     }
 }
