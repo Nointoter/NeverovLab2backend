@@ -3,13 +3,9 @@ using NeverovLab2backend.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using NeverovLab2backend.Data;
-using System;
-using Microsoft.EntityFrameworkCore;
 using NeverovLab2backend.Models.Auth;
 using System.Security.Cryptography;
-using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
+
 
 namespace NeverovLab2backend.Controllers;
 

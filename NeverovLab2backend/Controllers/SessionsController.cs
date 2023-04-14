@@ -69,7 +69,7 @@ public class SessionsController : Controller
             }
             
             _db.DeleteCharacter(model.sessionModel.Id_Character?? -1);
-            return Ok(ResponseHandler.GetAppResponse(type, "Delete Successfully"));
+            return Ok(ResponseHandler.GetAppResponse(type, "Удаление выполнено успешно."));
         }
         catch (Exception ex)
         {

@@ -1,8 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using NeverovLab2backend.Data;
 using NeverovLab2backend.Models;
-using NeverovLab2backend.Models.Auth;
+
 
 
 namespace NeverovLab2backend.Controllers;
@@ -108,7 +107,7 @@ public class TalesController : Controller
             ResponseType type = ResponseType.Success;
             _db.DeleteTale(id);
             _db.DeleteAllSession(id);
-            return Ok(ResponseHandler.GetAppResponse(type, "Delete Successfully"));
+            return Ok(ResponseHandler.GetAppResponse(type, "Удаление выполнено успешно."));
         }
         catch (Exception ex)
         {
