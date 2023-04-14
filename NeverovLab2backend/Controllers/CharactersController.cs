@@ -89,7 +89,7 @@ public class CharactersController : Controller
     // POST api/<CharactersController>
     [HttpPost]
     [Route("SaveCharacter")]
-    public IActionResult Post( CharacterTokenModel model)
+    public IActionResult Post(CharacterTokenModel model)
     {
         try
         {
@@ -108,7 +108,7 @@ public class CharactersController : Controller
     // PUT api/<CharactersController>/5
     [HttpPut]
     [Route("UpdateCharacter")]
-    public IActionResult Put([FromBody] CharacterModel model)
+    public IActionResult Put(CharacterModel model)
     {
         try
         {
