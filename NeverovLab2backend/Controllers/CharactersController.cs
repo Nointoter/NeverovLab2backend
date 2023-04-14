@@ -43,7 +43,7 @@ public class CharactersController : Controller
                     {
                         Id = character.Id,
                         Id_Member = character.Id_Member,
-                        NameMember = UserData.Where(d => d.Id.Equals(character.Id)).FirstOrDefault().Username,
+                        NameMember = UserData.Where(d => d.Id.Equals(character.Id_Member)).FirstOrDefault().Username,
                         Name =character.Name,
                         Gender= character.Gender,
                         Race = character.Race
