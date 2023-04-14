@@ -37,55 +37,36 @@ public class DBHelper
         }
     }
 
-    public UserModel GetUserByRefreshToken(string refreshToken)
+    public List<UserModel> GetAllUsers()
+    {
+        List<UserModel> response = new List<UserModel>();
+        var dataList = _context.Users.ToList();
+        dataList.ForEach(row => response.Add(new UserModel()
+        {
+            Id = row.Id,
+            Username = row.Username          
+        }));
+        return response;
+    }
+    public User GetUserByRefreshToken(string refreshToken)
     {
         var row = _context.Users.Where(d => d.RefreshToken.Equals(refreshToken)).FirstOrDefault();
-        return new UserModel()
-        {
-            Id = row.Id,
-            Username = row.Username,
-            PasswordHash = row.PasswordHash,
-            PasswordSalt = row.PasswordSalt,
-            Token = row.Token,
-            RefreshToken = row.RefreshToken,
-            TokenCreated = row.TokenCreated,
-            TokenExpires = row.TokenExpires,
-        };
+        return row;
     }
     
-    public UserModel GetUserByToken(string token)
+    public User GetUserByToken(string token)
     {
         var row = _context.Users.Where(d => d.Token.Equals(token)).FirstOrDefault();
-        return new UserModel()
-        {
-            Id = row.Id,
-            Username = row.Username,
-            PasswordHash = row.PasswordHash,
-            PasswordSalt = row.PasswordSalt,
-            Token = row.Token,
-            RefreshToken = row.RefreshToken,
-            TokenCreated = row.TokenCreated,
-            TokenExpires = row.TokenExpires,
-        };
+        return row;
     }
     /// <summary>
     /// GET
     /// </summary>
     /// <returns></returns>
-    public UserModel GetUserByUserName(string username)
+    public User GetUserByUserName(string username)
     {
         var row = _context.Users.Where(d => d.Username.Equals(username)).FirstOrDefault();
-        return new UserModel()
-        {
-            Id= row.Id,
-            Username = row.Username,
-            PasswordHash= row.PasswordHash,
-            PasswordSalt= row.PasswordSalt,
-            Token = row.Token,
-            RefreshToken = row.RefreshToken,
-            TokenCreated= row.TokenCreated,
-            TokenExpires= row.TokenExpires,
-        };
+        return row;
     }
     /// <summary>
     /// It serves the POST/PUT/PATCH
@@ -202,5 +183,38 @@ public class DBHelper
             _context.Characters.Remove(order);
             _context.SaveChanges();
         }
+    }
+
+    public void SaveTale(TaleModel taleModel)
+    {
+        Tale dbTable = new Tale();
+
+        if (taleModel.Id > 0)
+        {
+            //PUT
+            dbTable = _context.Tales.Where(d => d.Id.Equals(taleModel.Id)).FirstOrDefault();
+            if (dbTable != null)
+            {
+
+                dbTable.Id = taleModel.Id;
+                dbTable.Name = taleModel.Name;
+                dbTable.Id_Master = taleModel.Id_Master;
+                dbTable.count_parties = taleModel.count_parties;
+                dbTable.Start_Tale = taleModel.Start_Tale;
+               
+            }
+        }
+        else
+        {
+            //POST
+            dbTable.Id = taleModel.Id;
+            dbTable.Name = taleModel.Name;
+            dbTable.Id_Master = taleModel.Id_Master;
+            dbTable.count_parties = taleModel.count_parties;
+            dbTable.Start_Tale = taleModel.Start_Tale;
+            _context.Tales.Add(dbTable);
+        }
+
+        _context.SaveChanges();
     }
 }

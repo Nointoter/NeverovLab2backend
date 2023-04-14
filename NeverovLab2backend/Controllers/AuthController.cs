@@ -6,6 +6,10 @@ using NeverovLab2backend.Data;
 using System;
 using Microsoft.EntityFrameworkCore;
 using NeverovLab2backend.Models.Auth;
+using System.Security.Cryptography;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace NeverovLab2backend.Controllers;
 
@@ -23,37 +27,74 @@ public class AuthController : ControllerBase
         _dbContext = pgDbContext;
         _tokenService = tokenService ?? throw new ArgumentNullException(nameof(tokenService));
     }
+    [HttpPost("register")]
+    public async Task<ActionResult<UserModel>> Register(UserDto request)
+    {
+        UserModel user = new UserModel();
+        CreatePasswordHash(request.Password, out byte[] passwordHash, out byte[] passwordSalt);
+        user.Id = 0;
+        user.Username = request.Username;
+        user.PasswordHash = passwordHash;
+        user.PasswordSalt = passwordSalt;
+        _db.SaveUser(user);
+        //Занести данные в таблицу User(UserModel), UserDto c помощью dbHelper
+
+        return Ok(user);
+    }
 
     [HttpPost, Route("login")]
     public IActionResult Login([FromBody] UserDto loginModel)
     {
+        User user = _db.GetUserByUserName(loginModel.Username);
+
         if (loginModel is null)
         {
-            return BadRequest("Invalid client request");
+            return BadRequest("Отсутствуют данные.");
         }
-        /*
-        var user = _dbContext.Users.FirstOrDefault(u => 
-            (u.UserName == loginModel.UserName) && (u.Password == loginModel.Password));
-        if (user is null)
-            return Unauthorized();
-
+        if (user.Username != loginModel.Username || !VerifyPasswordHash(loginModel.Password, user.PasswordHash, user.PasswordSalt))
+        {
+            return BadRequest("Введён неверный логин или пароль.");
+        }
+            
+           
         var claims = new List<Claim>
         {
-            new Claim(ClaimTypes.Name, loginModel.UserName),
+            new Claim(ClaimTypes.Name, loginModel.Username),
             new Claim(ClaimTypes.Role, "Manager")
         };
         var accessToken = _tokenService.GenerateAccessToken(claims);
         var refreshToken = _tokenService.GenerateRefreshToken();
 
+        user.Token = accessToken;
         user.RefreshToken = refreshToken;
-        user.RefreshTokenExpiryTime = DateTime.Now.AddDays(7);
+        user.TokenCreated = Convert.ToString( DateTime.Now);
+        user.TokenExpires = Convert.ToString(DateTime.Now.AddDays(7));
+        
 
-        _dbContext.SaveChanges();*/
+        _dbContext.SaveChanges();
 
         return Ok(new AuthenticatedResponse
         {
-            Token = "",
-            RefreshToken = ""
+            Token = accessToken,
+            RefreshToken = refreshToken
         });
+    }
+
+    private void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
+    {
+        using (var hmac = new HMACSHA512())
+        {
+            passwordSalt = hmac.Key;
+            passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
+        }
+    }
+
+    private bool VerifyPasswordHash(string password, byte[] passwordHash, byte[] passwordSalt)
+    {
+        using (var hmac = new HMACSHA512(passwordSalt))
+        {
+            var computedHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
+            return computedHash.SequenceEqual(passwordHash);
+        }
     }
 }

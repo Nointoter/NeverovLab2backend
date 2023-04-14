@@ -26,6 +26,9 @@ public class TokenController : ControllerBase
     [Route("refresh")]
     public IActionResult Refresh(TokenApiModel tokenApiModel)
     {
+
+        User user = _db.GetUserByToken(tokenApiModel.AccessToken);
+
         if (tokenApiModel is null)
             return BadRequest("Invalid client request");
 
@@ -35,21 +38,19 @@ public class TokenController : ControllerBase
         var principal = _tokenService.GetPrincipalFromExpiredToken(accessToken);
         var username = principal.Identity.Name; //this is mapped to the Name claim by default
 
-        /*var user = _dbContext.LoginModels.SingleOrDefault(u => u.UserName == username);
-
-        if (user == null || user.RefreshToken != refreshToken || user.RefreshTokenExpiryTime <= DateTime.Now)
+        if (user == null || user.RefreshToken != refreshToken || Convert.ToDateTime(user.TokenExpires) <= DateTime.Now)
             return BadRequest("Invalid client request");
 
         var newAccessToken = _tokenService.GenerateAccessToken(principal.Claims);
         var newRefreshToken = _tokenService.GenerateRefreshToken();
 
         user.RefreshToken = newRefreshToken;
-        _userContext.SaveChanges();*/
+        _dbContext.SaveChanges();
 
         return Ok(new AuthenticatedResponse()
         {
-            Token = "",
-            RefreshToken = ""
+            Token = newAccessToken,
+            RefreshToken = newRefreshToken
         });
     }
 

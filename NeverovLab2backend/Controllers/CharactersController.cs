@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using NeverovLab2backend.Data;
 using NeverovLab2backend.Models;
+using NeverovLab2backend.Models.Auth;
 
 namespace NeverovLab2backend.Controllers;
 
@@ -9,6 +11,7 @@ namespace NeverovLab2backend.Controllers;
 public class CharactersController : Controller
 {
     private readonly DBHelper _db;
+
     public CharactersController(pgDbContext pgDbContext)
     {
         _db = new DBHelper(pgDbContext);
@@ -21,12 +24,33 @@ public class CharactersController : Controller
         ResponseType type = ResponseType.Success;
         try
         {
-            IEnumerable<CharacterModel> data = _db.GetCharacters();
-            if (!data.Any())
+
+            IEnumerable<CharacterModel> characterData = _db.GetCharacters();
+            if (!characterData.Any())
             {
                 type = ResponseType.NotFound;
             }
-            return Ok(ResponseHandler.GetAppResponse(type, data));
+            IEnumerable<UserModel> UserData = _db.GetAllUsers();
+            if (!UserData.Any())
+            {
+                type = ResponseType.NotFound;
+            }
+            List<UserCharModel> userCharModels = new List<UserCharModel>();
+            foreach(CharacterModel character in characterData)
+            {
+                userCharModels.Add(
+                    new UserCharModel()
+                    {
+                        Id = character.Id,
+                        Id_Member = character.Id_Member,
+                        NameMember = UserData.Where(d => d.Id.Equals(character.Id)).FirstOrDefault().Username,
+                        Name =character.Name,
+                        Gender= character.Gender,
+                        Race = character.Race
+                    }
+                    ) ;
+            }
+            return Ok(ResponseHandler.GetAppResponse(type, userCharModels));
         }
         catch (Exception ex)
         {
@@ -37,18 +61,23 @@ public class CharactersController : Controller
     // GET api/<CharactersController>/5
     [HttpGet]
     [Route("GetCharacterById/{id}")]
-    public IActionResult Get(int id)
+    public IActionResult Get(int id, string token)
     {
         ResponseType type = ResponseType.Success;
         try
-        {
-            CharacterModel data = _db.GetCharacterById(id);
-
-            if (data == null)
+        {   
+            User user=_db.GetUserByToken(token);
+            CharacterModel characterModel = _db.GetCharacterById(id);
+            if (characterModel == null)
             {
                 type = ResponseType.NotFound;
             }
-            return Ok(ResponseHandler.GetAppResponse(type, data));
+            if(user.Id != characterModel.Id)
+            {
+                type = ResponseType.NotFound;
+                return Ok(ResponseHandler.GetAppResponse(type, new CharacterModel()));
+            }
+            return Ok(ResponseHandler.GetAppResponse(type, characterModel));
         }
         catch (Exception ex)
         {
