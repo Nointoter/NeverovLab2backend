@@ -1,13 +1,29 @@
 ﻿using Microsoft.IdentityModel.Tokens;
+using NeverovLab2backend.Data;
+using Newtonsoft.Json.Linq;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using System;
+using JWT;
+using JWT.Algorithms;
+using JWT.Serializers;
 
 namespace NeverovLab2backend.Services
 {
+    public class JwtToken
+    {
+        public long exp { get; set; }
+    }
+
     public class TokenService : ITokenService
     {
+        private IJsonSerializer _serializer = new JsonNetSerializer();
+        private IDateTimeProvider _provider = new UtcDateTimeProvider();
+        private IBase64UrlEncoder _urlEncoder = new JwtBase64UrlEncoder();
+        private IJwtAlgorithm _algorithm = new HMACSHA256Algorithm();
+
         public string GenerateAccessToken(IEnumerable<Claim> claims)
         {
             var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("superSecretKey@345"));
@@ -54,6 +70,27 @@ namespace NeverovLab2backend.Services
                 throw new SecurityTokenException("Invalid token");
 
             return principal;
+        }
+
+        public static long GetTokenExpirationTime(string token)
+        {
+            var handler = new JwtSecurityTokenHandler();
+            var jwtSecurityToken = handler.ReadJwtToken(token);
+            var tokenExp = jwtSecurityToken.Claims.First(claim => claim.Type.Equals("exp")).Value;
+            var ticks = long.Parse(tokenExp);
+            return ticks;
+        }
+
+        public bool CheckToken(User user)
+        {
+            var tokenTicks = GetTokenExpirationTime(user.Token);
+            var tokenDate = DateTimeOffset.FromUnixTimeSeconds(tokenTicks).AddHours(5);
+
+            var now = DateTime.Now.ToUniversalTime();
+
+            if (DateTime.Now.Ticks > tokenDate.Ticks)
+                return false;
+            return true;
         }
     }
 }

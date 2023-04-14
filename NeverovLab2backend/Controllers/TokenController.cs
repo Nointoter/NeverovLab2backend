@@ -44,12 +44,13 @@ public class TokenController : ControllerBase
         var newAccessToken = _tokenService.GenerateAccessToken(principal.Claims);
         var newRefreshToken = _tokenService.GenerateRefreshToken();
 
+        user.Token = newAccessToken;
         user.RefreshToken = newRefreshToken;
         _dbContext.SaveChanges();
 
-        return Ok(new AuthenticatedResponse()
+        return Ok(new TokenApiModel()
         {
-            Token = newAccessToken,
+            AccessToken = newAccessToken,
             RefreshToken = newRefreshToken
         });
     }

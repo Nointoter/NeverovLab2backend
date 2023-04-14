@@ -1,4 +1,5 @@
-﻿using System.Security.Claims;
+﻿using NeverovLab2backend.Data;
+using System.Security.Claims;
 
 namespace NeverovLab2backend.Services
 {
@@ -7,5 +8,6 @@ namespace NeverovLab2backend.Services
         string GenerateAccessToken(IEnumerable<Claim> claims);
         string GenerateRefreshToken();
         ClaimsPrincipal GetPrincipalFromExpiredToken(string token);
+        public bool CheckToken(User user);
     }
 }

@@ -73,8 +73,13 @@ public class AuthController : ControllerBase
 
         user.Token = accessToken;
         user.RefreshToken = refreshToken;
+<<<<<<< Updated upstream
         user.TokenCreated = Convert.ToString(DateTime.Now);
         user.TokenExpires = Convert.ToString(DateTime.Now.AddMinutes(1));
+=======
+        user.TokenCreated = Convert.ToString( DateTime.Now);
+        user.TokenExpires = Convert.ToString(DateTime.Now.AddDays(1));
+>>>>>>> Stashed changes
         
 
         _dbContext.SaveChanges();
