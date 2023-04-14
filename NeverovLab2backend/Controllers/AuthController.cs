@@ -30,16 +30,23 @@ public class AuthController : ControllerBase
     [HttpPost("register")]
     public async Task<ActionResult<UserModel>> Register(UserDto request)
     {
-        UserModel user = new UserModel();
-        CreatePasswordHash(request.Password, out byte[] passwordHash, out byte[] passwordSalt);
-        user.Id = 0;
-        user.Username = request.Username;
-        user.PasswordHash = passwordHash;
-        user.PasswordSalt = passwordSalt;
-        _db.SaveUser(user);
-        //Занести данные в таблицу User(UserModel), UserDto c помощью dbHelper
+        try
+        {
+            UserModel user = new UserModel();
+            CreatePasswordHash(request.Password, out byte[] passwordHash, out byte[] passwordSalt);
+            user.Id = 0;
+            user.Username = request.Username;
+            user.PasswordHash = passwordHash;
+            user.PasswordSalt = passwordSalt;
+            _db.SaveUser(user);
+            //Занести данные в таблицу User(UserModel), UserDto c помощью dbHelper
 
-        return Ok(user);
+            return Ok();
+        }
+        catch(Exception ex)
+        {
+            return BadRequest(ResponseHandler.GetExceptionResponse(ex));
+        }
     }
 
     [HttpPost, Route("login")]

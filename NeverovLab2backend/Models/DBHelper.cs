@@ -266,4 +266,53 @@ public class DBHelper
         }));
         return response;
     }
+    /// <summary>
+    /// POST
+    /// </summary>
+    /// <param name="sessionModel"></param>
+    public void AddToSession(SessionModel sessionModel)
+    {
+        Session dbTable = new Session();
+
+        //POST
+        dbTable.Id_Tale=sessionModel.Id_Tale;
+        dbTable.Id_Character = sessionModel.Id_Character;
+        
+        _context.Sessions.Add(dbTable);
+        
+        _context.SaveChanges();
+    }
+
+    public void DeleteMemberInSession(int id)
+    {
+        var row = _context.Sessions.Where(d => d.Id_Character.Equals(id)).FirstOrDefault();
+        if (row != null)
+        {
+            _context.Sessions.Remove(row);
+            _context.SaveChanges();
+        }
+    }
+    /// <summary>
+    /// ПЕРЕДЕЛАТЬ
+    /// </summary>
+    /// <param name="id_tale"></param>
+    /// <returns></returns>
+    public List<SessionModel> GetAllCharacterByIdTale(int id_tale)
+    {
+        List<SessionModel> sessionModel = new List<SessionModel>();
+        var dataList = _context.Sessions.ToList();
+        foreach (var row in dataList)
+        {
+            if (row.Id_Tale == id_tale)
+            {
+                sessionModel.Add(new SessionModel()
+                {
+                    Id_Character = row.Id_Character,
+      
+                    
+                });
+            }
+        }
+        return sessionModel;
+    }
 }

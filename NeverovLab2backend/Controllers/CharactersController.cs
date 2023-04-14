@@ -61,16 +61,17 @@ public class CharactersController : Controller
     // GET api/<CharactersController>/5
     [HttpGet]
     [Route("GetCharacterById/{id}")]
-    public IActionResult Get(int id, string token)
+    public IActionResult Get(IdMemberTokenModel model)
     {
         ResponseType type = ResponseType.Success;
         try
         {   
-            User user=_db.GetUserByToken(token);
-            CharacterModel characterModel = _db.GetCharacterById(id);
+            User user=_db.GetUserByToken(model.token);
+            CharacterModel characterModel = _db.GetCharacterById(model.id??-1);
             if (characterModel == null)
             {
                 type = ResponseType.NotFound;
+                return Ok(ResponseHandler.GetAppResponse(type, new CharacterModel()));
             }
             if(user.Id != characterModel.Id)
             {
@@ -88,14 +89,14 @@ public class CharactersController : Controller
     // POST api/<CharactersController>
     [HttpPost]
     [Route("SaveCharacter")]
-    public IActionResult Post([FromBody] CharacterModel model, string token)
+    public IActionResult Post( CharacterTokenModel model)
     {
         try
         {
-            User user = _db.GetUserByToken(token);
-            model.Id_Member = user.Id;
+            User user = _db.GetUserByToken(model.token);
+            model.CharacterModel.Id_Member = user.Id;
             ResponseType type = ResponseType.Success;
-            _db.SaveCharacter(model);
+            _db.SaveCharacter(model.CharacterModel);
             return Ok(ResponseHandler.GetAppResponse(type, model));
         }
         catch (Exception ex)
