@@ -70,7 +70,7 @@ public class AuthController : ControllerBase
         var claims = new List<Claim>
         {
             new Claim(ClaimTypes.Name, loginModel.Username),
-            new Claim(ClaimTypes.Role, "Manager")
+            new Claim(ClaimTypes.Role, "Player")
         };
         var accessToken = _tokenService.GenerateAccessToken(claims);
         var refreshToken = _tokenService.GenerateRefreshToken();

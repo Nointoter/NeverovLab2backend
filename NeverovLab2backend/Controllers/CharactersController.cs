@@ -155,7 +155,7 @@ public class CharactersController : Controller
                 return Ok(ResponseHandler.GetAppResponse(type, new CharacterModel()));
             }
             _db.DeleteCharacter(model.id??-1);
-            return Ok(ResponseHandler.GetAppResponse(type, "Delete Successfully"));
+            return Ok(ResponseHandler.GetAppResponse(type, "Удаление прошло успешно."));
         }
         catch (Exception ex)
         {
