@@ -1,8 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using NeverovLab2backend.Data;
 using NeverovLab2backend.Models;
-using NeverovLab2backend.Models.Auth;
+
 
 namespace NeverovLab2backend.Controllers;
 
@@ -20,7 +19,7 @@ public class SessionsController : Controller
     // POST 
     [HttpPost]
     [Route("SaveSession")]
-    public IActionResult Post(SessionTokenModel model)// +id tale + id персонажи + token
+    public IActionResult Post(SessionTokenModel model)
     {
         ResponseType type = ResponseType.Success;
         try
@@ -79,7 +78,7 @@ public class SessionsController : Controller
 
     [HttpGet]
     [Route("GetSessionById/{id}")]
-    public IActionResult GetSession(int id)//+id tale
+    public IActionResult GetSession(int id)
     {
         ResponseType type = ResponseType.Success;
         try

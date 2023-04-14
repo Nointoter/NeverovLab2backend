@@ -38,7 +38,7 @@ public class AuthController : ControllerBase
             user.PasswordHash = passwordHash;
             user.PasswordSalt = passwordSalt;
             _db.SaveUser(user);
-            //Занести данные в таблицу User(UserModel), UserDto c помощью dbHelper
+           
 
             return Ok();
         }

@@ -36,7 +36,7 @@ public class TokenController : ControllerBase
         string refreshToken = tokenApiModel.RefreshToken;
 
         var principal = _tokenService.GetPrincipalFromExpiredToken(accessToken);
-        var username = principal.Identity.Name; //this is mapped to the Name claim by default
+        var username = principal.Identity.Name; 
 
         if (user == null || user.RefreshToken != refreshToken || Convert.ToDateTime(user.TokenExpires) <= DateTime.Now)
             return BadRequest("Invalid client request");
@@ -52,21 +52,5 @@ public class TokenController : ControllerBase
             Token = newAccessToken,
             RefreshToken = newRefreshToken
         });
-    }
-
-    [HttpPost, Authorize]
-    [Route("revoke")]
-    public IActionResult Revoke()
-    {
-        var username = User.Identity.Name;
-
-        /*var user = _userContext.LoginModels.SingleOrDefault(u => u.UserName == username);
-        if (user == null) return BadRequest();
-
-        user.RefreshToken = null;
-
-        _userContext.SaveChanges();*/
-
-        return NoContent();
     }
 }

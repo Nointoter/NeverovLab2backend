@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using NeverovLab2backend.Data;
 using NeverovLab2backend.Models;
 using NeverovLab2backend.Models.Auth;
@@ -155,7 +154,7 @@ public class CharactersController : Controller
                 return Ok(ResponseHandler.GetAppResponse(type, new CharacterModel()));
             }
             _db.DeleteCharacter(model.id??-1);
-            return Ok(ResponseHandler.GetAppResponse(type, "Удаление прошло успешно."));
+            return Ok(ResponseHandler.GetAppResponse(type, "Удаление выполнено успешно."));
         }
         catch (Exception ex)
         {
