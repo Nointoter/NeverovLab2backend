@@ -36,6 +36,25 @@ public class TalesController : Controller
 
     [HttpGet]
     [Route("GetTalesByIdMaster/{id}")]
+    public IActionResult GetTaleById(int id_tale)
+    {
+        ResponseType type = ResponseType.Success;
+        try
+        {
+            Tale tale = _db.GetTale(id_tale);
+            if(tale==null)
+            {
+                return BadRequest(ResponseHandler.GetAppResponse(type, "ћастер пока не придумал такую историю!"));
+            }
+            return Ok(ResponseHandler.GetAppResponse(type, tale));
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ResponseHandler.GetExceptionResponse(ex));
+        }
+    }
+    [HttpGet]
+    [Route("GetTalesByIdMaster/{id}")]
     public IActionResult GetByIdMaster(IdUserTokenModel model)
     {
         ResponseType type = ResponseType.Success;

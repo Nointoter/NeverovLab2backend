@@ -228,6 +228,15 @@ public class DBHelper
 
         _context.SaveChanges();
     }
+    public Tale GetTale(int id)
+    {
+        Tale row = _context.Tales.Where(d => d.Id.Equals(id)).FirstOrDefault();
+        if (row != null)
+        {
+            return(row);
+        }
+        return (null);
+    }
     //DELETE
     public void DeleteTale(int id)
     {
