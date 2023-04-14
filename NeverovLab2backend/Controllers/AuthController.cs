@@ -32,7 +32,10 @@ public class AuthController : ControllerBase
     {
         try
         {
+
             UserModel user = new UserModel();
+            if (!_db.CheackUserName(request.Username))
+                return BadRequest("Такой пользователь уже существует");
             CreatePasswordHash(request.Password, out byte[] passwordHash, out byte[] passwordSalt);
             user.Id = 0;
             user.Username = request.Username;

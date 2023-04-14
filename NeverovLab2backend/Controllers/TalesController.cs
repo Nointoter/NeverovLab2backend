@@ -37,7 +37,7 @@ public class TalesController : Controller
 
     [HttpGet]
     [Route("GetTalesByIdMaster/{id}")]
-    public IActionResult GetByIdMaster(IdMemberTokenModel model)
+    public IActionResult GetByIdMaster(IdUserTokenModel model)
     {
         ResponseType type = ResponseType.Success;
         try
@@ -49,7 +49,7 @@ public class TalesController : Controller
                 type = ResponseType.NotFound;
                 return Ok(ResponseHandler.GetAppResponse(type, new CharacterModel()));
             }
-            if (user.Id != taleModel.Id)
+            if (user.Id != taleModel.Id_Master)
             {
                 type = ResponseType.NotFound;
                 return Ok(ResponseHandler.GetAppResponse(type, new CharacterModel()));
@@ -107,6 +107,7 @@ public class TalesController : Controller
         {
             ResponseType type = ResponseType.Success;
             _db.DeleteTale(id);
+            _db.DeleteAllSession(id);
             return Ok(ResponseHandler.GetAppResponse(type, "Delete Successfully"));
         }
         catch (Exception ex)

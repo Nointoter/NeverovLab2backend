@@ -14,11 +14,7 @@ public class pgDbContext : DbContext
         get;
         set;
     }
-    public DbSet<Member> Members
-    {
-        get;
-        set;
-    }
+   
     public DbSet<Character> Characters
     {
         get;

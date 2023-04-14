@@ -17,15 +17,28 @@ public class SessionsController : Controller
         _db = new DBHelper(pgDbContext);
     }
 
-    // POST api/<CharactersController>
+    // POST 
     [HttpPost]
-    [Route("SaveTale")]
-    public IActionResult Post(SessionModel model)
+    [Route("SaveSession")]
+    public IActionResult Post(SessionTokenModel model)// +id tale + id персонажи + token
     {
+        ResponseType type = ResponseType.Success;
         try
         {
-            ResponseType type = ResponseType.Success;
-            _db.SaveSession(model);
+            User user = _db.GetUserByToken(model.token);
+            CharacterModel characterModel = _db.GetCharacterById(model.sessionModel.Id_Character?? -1);
+            if (characterModel == null)
+            {
+                type = ResponseType.NotFound;
+                return Ok(ResponseHandler.GetAppResponse(type, new CharacterModel()));
+            }
+            if (user.Id != characterModel.Id_User)
+            {
+                type = ResponseType.NotFound;
+                return Ok(ResponseHandler.GetAppResponse(type, new CharacterModel()));
+            }
+            _db.SaveSession(model.sessionModel);
+
             return Ok(ResponseHandler.GetAppResponse(type, model));
         }
         catch (Exception ex)
@@ -37,13 +50,41 @@ public class SessionsController : Controller
     // DELETE 
     [HttpDelete]
     [Route("DeleteSession/{id}")]
-    public IActionResult Delete(int id)
+    public IActionResult Delete(SessionTokenModel model)
     {
+        ResponseType type = ResponseType.Success;
         try
         {
-            ResponseType type = ResponseType.Success;
-            _db.DeleteCharacter(id);
+            User user = _db.GetUserByToken(model.token);
+            CharacterModel characterModel = _db.GetCharacterById(model.sessionModel.Id_Character?? -1);
+            if (characterModel == null)
+            {
+                type = ResponseType.NotFound;
+                return Ok(ResponseHandler.GetAppResponse(type, new CharacterModel()));
+            }
+            if (user.Id != characterModel.Id_User)
+            {
+                type = ResponseType.NotFound;
+                return Ok(ResponseHandler.GetAppResponse(type, new CharacterModel()));
+            }
+            
+            _db.DeleteCharacter(model.sessionModel.Id_Character?? -1);
             return Ok(ResponseHandler.GetAppResponse(type, "Delete Successfully"));
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ResponseHandler.GetExceptionResponse(ex));
+        }
+    }
+
+    [HttpGet]
+    [Route("GetSessionById/{id}")]
+    public IActionResult GetSession(int id)//+id tale
+    {
+        ResponseType type = ResponseType.Success;
+        try
+        {                    
+            return Ok(ResponseHandler.GetAppResponse(type, _db.GetAllCharacterByIdTale(id)));
         }
         catch (Exception ex)
         {

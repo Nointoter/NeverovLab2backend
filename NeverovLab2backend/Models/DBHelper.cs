@@ -27,7 +27,14 @@ public class DBHelper
         }));
         return response;
     }
-
+    public bool CheackUserName(string login)
+    {
+        var row = _context.Users.Where(d => d.Username.Equals(login)).FirstOrDefault();
+        if (row == null)
+            return true;
+        return false;
+        
+    }
     public void DeleteSessionCharacter(int id)
     {
         var order = _context.Sessions.Where(d => d.Id_Character.Equals(id)).FirstOrDefault();
@@ -122,9 +129,9 @@ public class DBHelper
         dataList.ForEach(row => response.Add(new CharacterModel()
         {
             Id = row.Id,
-            Id_Member = row.Id_Member,
+            Id_User = row.Id_User,
             Name = row.Name,
-            Race = row.Race,
+            Race = row.Race,    
             Gender = row.Gender,
             
         }));
@@ -137,7 +144,7 @@ public class DBHelper
         return new CharacterModel()
         {
             Id = row.Id,
-            Id_Member = row.Id_Member,
+            Id_User = row.Id_User,
             Name = row.Name,
             Race = row.Race,
             Gender = row.Gender,
@@ -155,7 +162,7 @@ public class DBHelper
             dbTable = _context.Characters.Where(d => d.Id.Equals(characterModel.Id)).FirstOrDefault();
             if (dbTable != null)
             {
-                dbTable.Id_Member = characterModel.Id_Member;
+                dbTable.Id_User = characterModel.Id_User;
                 dbTable.Name = characterModel.Name;
                 dbTable.Race = characterModel.Race;
                 dbTable.Gender = characterModel.Gender;
@@ -164,7 +171,7 @@ public class DBHelper
         else
         {
             //POST
-            dbTable.Id_Member = characterModel.Id_Member;
+            dbTable.Id_User = characterModel.Id_User;
             dbTable.Name = characterModel.Name;
             dbTable.Race = characterModel.Race;
             dbTable.Gender = characterModel.Gender;
@@ -264,7 +271,7 @@ public class DBHelper
     /// POST
     /// </summary>
     /// <param name="sessionModel"></param>
-    public void AddToSession(SessionModel sessionModel)
+    public void SaveSession(SessionModel sessionModel)
     {
         Session dbTable = new Session();
 
@@ -277,7 +284,7 @@ public class DBHelper
         _context.SaveChanges();
     }
 
-    public void DeleteMemberInSession(int id)
+    public void DeleteUserInSession(int id)
     {
         var row = _context.Sessions.Where(d => d.Id_Character.Equals(id)).FirstOrDefault();
         if (row != null)
@@ -291,6 +298,18 @@ public class DBHelper
     /// </summary>
     /// <param name="id_tale"></param>
     /// <returns></returns>
+    
+    
+    public void DeleteAllSession(int id)
+    {
+        
+        var rows = _context.Sessions.Where(d => d.Id_Tale.Equals(id)).ToList();
+        foreach (var row in rows)
+        { 
+            _context.Sessions.Remove(row);                   
+        }
+        _context.SaveChanges();
+    }
     public List<CharacterModel> GetAllCharacterByIdTale(int id_tale)
     {
         List<CharacterModel> CharacterModel = new List<CharacterModel>();

@@ -1,8 +1,8 @@
 namespace NeverovLab2backend.Models;
 
-public class SessionTokenModel
+public class IdUserTokenModel
 {
-    public SessionModel? sessionModel { get; set; }
+    public int? id { get; set; }
     public string? token { get; set; }
 
 }

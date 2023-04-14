@@ -8,7 +8,7 @@ public class Character
 {
     [Key, Required]
     public int? Id { get; set; }
-    public int? Id_Member { get; set; }
+    public int? Id_User { get; set; }
     public string? Name { get; set; }
     public int? Gender { get; set; }
     public string? Race { get; set; }

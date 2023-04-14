@@ -42,8 +42,8 @@ public class CharactersController : Controller
                     new UserCharModel()
                     {
                         Id = character.Id,
-                        Id_Member = character.Id_Member,
-                        NameMember = UserData.Where(d => d.Id.Equals(character.Id_Member)).FirstOrDefault().Username,
+                        Id_User = character.Id_User,
+                        NameMember = UserData.Where(d => d.Id.Equals(character.Id_User)).FirstOrDefault().Username,
                         Name =character.Name,
                         Gender= character.Gender,
                         Race = character.Race
@@ -61,7 +61,7 @@ public class CharactersController : Controller
     // GET api/<CharactersController>/5
     [HttpGet]
     [Route("GetCharacterById/{id}")]
-    public IActionResult Get(IdMemberTokenModel model)
+    public IActionResult Get(IdUserTokenModel model)
     {
         ResponseType type = ResponseType.Success;
         try
@@ -73,7 +73,7 @@ public class CharactersController : Controller
                 type = ResponseType.NotFound;
                 return Ok(ResponseHandler.GetAppResponse(type, new CharacterModel()));
             }
-            if(user.Id != characterModel.Id)
+            if(user.Id != characterModel.Id_User)
             {
                 type = ResponseType.NotFound;
                 return Ok(ResponseHandler.GetAppResponse(type, new CharacterModel()));
@@ -94,7 +94,7 @@ public class CharactersController : Controller
         try
         {
             User user = _db.GetUserByToken(model.token);
-            model.CharacterModel.Id_Member = user.Id;
+            model.CharacterModel.Id_User = user.Id;
             ResponseType type = ResponseType.Success;
             _db.SaveCharacter(model.CharacterModel);
             return Ok(ResponseHandler.GetAppResponse(type, model));
@@ -108,12 +108,24 @@ public class CharactersController : Controller
     // PUT api/<CharactersController>/5
     [HttpPut]
     [Route("UpdateCharacter")]
-    public IActionResult Put(CharacterModel model)
+    public IActionResult Put(CharacterTokenModel model)
     {
         try
         {
             ResponseType type = ResponseType.Success;
-            _db.SaveCharacter(model);
+            User user = _db.GetUserByToken(model.token);
+            CharacterModel characterModel = _db.GetCharacterById(model.CharacterModel.Id?? -1);
+            if (characterModel == null)
+            {
+                type = ResponseType.NotFound;
+                return Ok(ResponseHandler.GetAppResponse(type, new CharacterModel()));
+            }
+            if (user.Id != characterModel.Id_User)
+            {
+                type = ResponseType.NotFound;
+                return Ok(ResponseHandler.GetAppResponse(type, new CharacterModel()));
+            }
+            _db.SaveCharacter(model.CharacterModel);
             return Ok(ResponseHandler.GetAppResponse(type, model));
         }
         catch (Exception ex)
@@ -125,12 +137,24 @@ public class CharactersController : Controller
     // DELETE api/<CharactersController>/5
     [HttpDelete]
     [Route("DeleteCharacter/{id}")]
-    public IActionResult Delete(int id)
+    public IActionResult Delete(IdUserTokenModel model)
     {
         try
         {
             ResponseType type = ResponseType.Success;
-            _db.DeleteCharacter(id);
+            User user = _db.GetUserByToken(model.token);
+            CharacterModel characterModel = _db.GetCharacterById(model.id ?? -1);
+            if (characterModel == null)
+            {
+                type = ResponseType.NotFound;
+                return Ok(ResponseHandler.GetAppResponse(type, new CharacterModel()));
+            }
+            if (user.Id != characterModel.Id_User)
+            {
+                type = ResponseType.NotFound;
+                return Ok(ResponseHandler.GetAppResponse(type, new CharacterModel()));
+            }
+            _db.DeleteCharacter(model.id??-1);
             return Ok(ResponseHandler.GetAppResponse(type, "Delete Successfully"));
         }
         catch (Exception ex)
