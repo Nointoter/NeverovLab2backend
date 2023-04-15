@@ -74,9 +74,8 @@ public class AuthController : ControllerBase
         user.Token = accessToken;
         user.RefreshToken = refreshToken;
         user.TokenCreated = Convert.ToString(DateTime.Now);
-        user.TokenExpires = Convert.ToString(DateTime.Now.AddMinutes(1));
+        user.TokenExpires = Convert.ToString(DateTime.Now.AddDays(1));
         
-
         _dbContext.SaveChanges();
 
         return Ok(new AuthenticatedResponse

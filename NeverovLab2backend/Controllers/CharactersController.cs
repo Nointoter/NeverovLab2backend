@@ -1,7 +1,14 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.Net.Http.Headers;
 using NeverovLab2backend.Data;
 using NeverovLab2backend.Models;
 using NeverovLab2backend.Models.Auth;
+using NeverovLab2backend.Services;
+using System.Net;
+using System.Web.Http;
 
 namespace NeverovLab2backend.Controllers;
 
@@ -10,10 +17,12 @@ namespace NeverovLab2backend.Controllers;
 public class CharactersController : Controller
 {
     private readonly DBHelper _db;
+    private readonly ITokenService _tokenService;
 
-    public CharactersController(pgDbContext pgDbContext)
+    public CharactersController(pgDbContext pgDbContext, ITokenService tokenService)
     {
         _db = new DBHelper(pgDbContext);
+        _tokenService = tokenService ?? throw new ArgumentNullException(nameof(tokenService));
     }
     // GET: api/<CharactersController>
     [HttpGet]
@@ -86,12 +95,19 @@ public class CharactersController : Controller
     }
 
     // POST api/<CharactersController>
+    [Authorize]
     [HttpPost]
     [Route("SaveCharacter")]
     public IActionResult Post(CharacterTokenModel model)
     {
         try
         {
+            var accessToken = Request.Headers[HeaderNames.Authorization][0].Remove(0, 7); ;
+            var isOkToken = _tokenService.CheckToken(_db.GetUserByToken(accessToken));
+            if (!isOkToken)
+            {
+                return StatusCode(401, "My error message");
+            }
             User user = _db.GetUserByToken(model.token);
             model.CharacterModel.Id_User = user.Id;
             ResponseType type = ResponseType.Success;
