@@ -1,12 +1,8 @@
-<<<<<<< Updated upstream
 ﻿using Microsoft.AspNetCore.Mvc;
-=======
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Net.Http.Headers;
->>>>>>> Stashed changes
 using NeverovLab2backend.Data;
 using NeverovLab2backend.Models;
 using NeverovLab2backend.Models.Auth;
