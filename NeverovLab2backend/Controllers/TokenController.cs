@@ -1,9 +1,9 @@
 ﻿using NeverovLab2backend.Models;
 using NeverovLab2backend.Services;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NeverovLab2backend.Data;
+using Microsoft.Net.Http.Headers;
 
 namespace NeverovLab2backend.Controllers;
 
@@ -53,5 +53,18 @@ public class TokenController : ControllerBase
             AccessToken = newAccessToken,
             RefreshToken = newRefreshToken
         });
+    }
+
+    [HttpPost, Authorize]
+    [Route("revoke")]
+    public IActionResult Revoke()
+    {
+        var accessToken = Request.Headers[HeaderNames.Authorization][0].Remove(0, 7);
+        var row = _db.GetUserByToken(accessToken);
+       
+        if (row == null) return BadRequest();
+        row.RefreshToken = null;
+        _dbContext.SaveChanges();
+        return NoContent();
     }
 }

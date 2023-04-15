@@ -1,7 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Net.Http.Headers;
 using NeverovLab2backend.Data;
 using NeverovLab2backend.Models;
-
+using NeverovLab2backend.Services;
 
 
 namespace NeverovLab2backend.Controllers;
@@ -11,7 +12,7 @@ namespace NeverovLab2backend.Controllers;
 public class TalesController : Controller
 {
     private readonly DBHelper _db;
-
+    private readonly ITokenService _tokenService;
     public TalesController(pgDbContext pgDbContext)
     {
         _db = new DBHelper(pgDbContext);
@@ -55,13 +56,19 @@ public class TalesController : Controller
     }
     [HttpGet]
     [Route("GetTalesByIdMaster/{id}")]
-    public IActionResult GetByIdMaster(IdUserTokenModel model)
+    public IActionResult GetByIdMaster(int id)
     {
         ResponseType type = ResponseType.Success;
         try
         {
-            User user = _db.GetUserByToken(model.token);
-            TaleModel taleModel = _db.GetTaleByIdMaster(model.id ?? -1);
+            var accessToken = Request.Headers[HeaderNames.Authorization][0].Remove(0, 7);
+            var isOkToken = _tokenService.CheckToken(_db.GetUserByToken(accessToken));
+            if (!isOkToken)
+            {
+                return StatusCode(401, "My error message");
+            }
+            User user = _db.GetUserByToken(accessToken);
+            TaleModel taleModel = _db.GetTaleByIdMaster(id);
             if (taleModel == null)
             {
                 type = ResponseType.NotFound;
@@ -83,14 +90,20 @@ public class TalesController : Controller
     // POST api/<CharactersController>
     [HttpPost]
     [Route("SaveTale")]
-    public IActionResult Post(TaleTokenModel model)
+    public IActionResult Post(TaleModel model)
     {
         try
         {
-            User user = _db.GetUserByToken(model.token);
-            model.taleModel.Id_Master = user.Id;
+            var accessToken = Request.Headers[HeaderNames.Authorization][0].Remove(0, 7);
+            var isOkToken = _tokenService.CheckToken(_db.GetUserByToken(accessToken));
+            if (!isOkToken)
+            {
+                return StatusCode(401, "My error message");
+            }
+            User user = _db.GetUserByToken(accessToken);
+            model.Id_Master = user.Id;
             ResponseType type = ResponseType.Success;
-            _db.SaveTale(model.taleModel);
+            _db.SaveTale(model);
             return Ok(ResponseHandler.GetAppResponse(type, model));
         }
         catch (Exception ex)

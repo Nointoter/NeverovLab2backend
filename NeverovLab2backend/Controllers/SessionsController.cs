@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Net.Http.Headers;
 using NeverovLab2backend.Data;
 using NeverovLab2backend.Models;
+using NeverovLab2backend.Services;
 
 
 namespace NeverovLab2backend.Controllers;
@@ -10,7 +12,7 @@ namespace NeverovLab2backend.Controllers;
 public class SessionsController : Controller
 {
     private readonly DBHelper _db;
-
+    private readonly ITokenService _tokenService;
     public SessionsController(pgDbContext pgDbContext)
     {
         _db = new DBHelper(pgDbContext);
@@ -19,13 +21,19 @@ public class SessionsController : Controller
     // POST 
     [HttpPost]
     [Route("SaveSession")]
-    public IActionResult Post(SessionTokenModel model)
+    public IActionResult Post(SessionModel model)
     {
         ResponseType type = ResponseType.Success;
         try
         {
-            User user = _db.GetUserByToken(model.token);
-            CharacterModel characterModel = _db.GetCharacterById(model.sessionModel.Id_Character?? -1);
+            var accessToken = Request.Headers[HeaderNames.Authorization][0].Remove(0, 7);
+            var isOkToken = _tokenService.CheckToken(_db.GetUserByToken(accessToken));
+            if (!isOkToken)
+            {
+                return StatusCode(401, "My error message");
+            }
+            User user = _db.GetUserByToken(accessToken);
+            CharacterModel characterModel = _db.GetCharacterById(model.Id_Character?? -1);
             if (characterModel == null)
             {
                 type = ResponseType.NotFound;
@@ -36,7 +44,7 @@ public class SessionsController : Controller
                 type = ResponseType.NotFound;
                 return Ok(ResponseHandler.GetAppResponse(type, new CharacterModel()));
             }
-            _db.SaveSession(model.sessionModel);
+            _db.SaveSession(model);
 
             return Ok(ResponseHandler.GetAppResponse(type, model));
         }
@@ -49,13 +57,19 @@ public class SessionsController : Controller
     // DELETE 
     [HttpDelete]
     [Route("DeleteSession/{id}")]
-    public IActionResult Delete(SessionTokenModel model)
+    public IActionResult Delete(SessionModel model)
     {
         ResponseType type = ResponseType.Success;
         try
         {
-            User user = _db.GetUserByToken(model.token);
-            CharacterModel characterModel = _db.GetCharacterById(model.sessionModel.Id_Character?? -1);
+            var accessToken = Request.Headers[HeaderNames.Authorization][0].Remove(0, 7);
+            var isOkToken = _tokenService.CheckToken(_db.GetUserByToken(accessToken));
+            if (!isOkToken)
+            {
+                return StatusCode(401, "My error message");
+            }
+            User user = _db.GetUserByToken(accessToken);
+            CharacterModel characterModel = _db.GetCharacterById(model.Id_Character?? -1);
             if (characterModel == null)
             {
                 type = ResponseType.NotFound;
@@ -67,7 +81,7 @@ public class SessionsController : Controller
                 return Ok(ResponseHandler.GetAppResponse(type, new CharacterModel()));
             }
             
-            _db.DeleteCharacter(model.sessionModel.Id_Character?? -1);
+            _db.DeleteCharacter(model.Id_Character?? -1);
             return Ok(ResponseHandler.GetAppResponse(type, "Удаление выполнено успешно."));
         }
         catch (Exception ex)

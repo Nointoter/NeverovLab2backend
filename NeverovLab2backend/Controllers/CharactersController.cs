@@ -1,13 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.Net.Http.Headers;
 using NeverovLab2backend.Data;
 using NeverovLab2backend.Models;
 using NeverovLab2backend.Models.Auth;
 using NeverovLab2backend.Services;
-using System.Net;
 using System.Web.Http;
 
 namespace NeverovLab2backend.Controllers;
@@ -32,7 +29,6 @@ public class CharactersController : Controller
         ResponseType type = ResponseType.Success;
         try
         {
-
             IEnumerable<CharacterModel> characterData = _db.GetCharacters();
             if (!characterData.Any())
             {
@@ -69,13 +65,19 @@ public class CharactersController : Controller
     // GET api/<CharactersController>/5
     [HttpGet]
     [Route("GetCharacterById/{id}")]
-    public IActionResult Get(IdUserTokenModel model)
+    public IActionResult Get(int id)
     {
         ResponseType type = ResponseType.Success;
         try
-        {   
-            User user=_db.GetUserByToken(model.token);
-            CharacterModel characterModel = _db.GetCharacterById(model.id??-1);
+        {
+            var accessToken = Request.Headers[HeaderNames.Authorization][0].Remove(0, 7);
+            var isOkToken = _tokenService.CheckToken(_db.GetUserByToken(accessToken));
+            if (!isOkToken)
+            {
+                return StatusCode(401, "My error message");
+            }
+            User user=_db.GetUserByToken(accessToken);
+            CharacterModel characterModel = _db.GetCharacterById(id);
             if (characterModel == null)
             {
                 type = ResponseType.NotFound;
@@ -98,20 +100,20 @@ public class CharactersController : Controller
     [Authorize]
     [HttpPost]
     [Route("SaveCharacter")]
-    public IActionResult Post(CharacterTokenModel model)
+    public IActionResult Post(CharacterModel model)
     {
         try
         {
-            var accessToken = Request.Headers[HeaderNames.Authorization][0].Remove(0, 7); ;
+            var accessToken = Request.Headers[HeaderNames.Authorization][0].Remove(0, 7); 
             var isOkToken = _tokenService.CheckToken(_db.GetUserByToken(accessToken));
             if (!isOkToken)
             {
                 return StatusCode(401, "My error message");
             }
-            User user = _db.GetUserByToken(model.token);
-            model.CharacterModel.Id_User = user.Id;
+            User user = _db.GetUserByToken(accessToken);
+            model.Id_User = user.Id;
             ResponseType type = ResponseType.Success;
-            _db.SaveCharacter(model.CharacterModel);
+            _db.SaveCharacter(model);
             return Ok(ResponseHandler.GetAppResponse(type, model));
         }
         catch (Exception ex)
@@ -123,13 +125,19 @@ public class CharactersController : Controller
     // PUT api/<CharactersController>/5
     [HttpPut]
     [Route("UpdateCharacter")]
-    public IActionResult Put(CharacterTokenModel model)
+    public IActionResult Put(CharacterModel model)
     {
         try
         {
+            var accessToken = Request.Headers[HeaderNames.Authorization][0].Remove(0, 7);
+            var isOkToken = _tokenService.CheckToken(_db.GetUserByToken(accessToken));
+            if (!isOkToken)
+            {
+                return StatusCode(401, "My error message");
+            }
             ResponseType type = ResponseType.Success;
-            User user = _db.GetUserByToken(model.token);
-            CharacterModel characterModel = _db.GetCharacterById(model.CharacterModel.Id?? -1);
+            User user = _db.GetUserByToken(accessToken);
+            CharacterModel characterModel = _db.GetCharacterById(model.Id?? -1);
             if (characterModel == null)
             {
                 type = ResponseType.NotFound;
@@ -140,7 +148,7 @@ public class CharactersController : Controller
                 type = ResponseType.NotFound;
                 return Ok(ResponseHandler.GetAppResponse(type, new CharacterModel()));
             }
-            _db.SaveCharacter(model.CharacterModel);
+            _db.SaveCharacter(model);
             return Ok(ResponseHandler.GetAppResponse(type, model));
         }
         catch (Exception ex)
@@ -152,13 +160,19 @@ public class CharactersController : Controller
     // DELETE api/<CharactersController>/5
     [HttpDelete]
     [Route("DeleteCharacter/{id}")]
-    public IActionResult Delete(IdUserTokenModel model)
+    public IActionResult Delete(int id)
     {
         try
         {
+            var accessToken = Request.Headers[HeaderNames.Authorization][0].Remove(0, 7);
+            var isOkToken = _tokenService.CheckToken(_db.GetUserByToken(accessToken));
+            if (!isOkToken)
+            {
+                return StatusCode(401, "My error message");
+            }
             ResponseType type = ResponseType.Success;
-            User user = _db.GetUserByToken(model.token);
-            CharacterModel characterModel = _db.GetCharacterById(model.id ?? -1);
+            User user = _db.GetUserByToken(accessToken);
+            CharacterModel characterModel = _db.GetCharacterById(id);
             if (characterModel == null)
             {
                 type = ResponseType.NotFound;
@@ -169,7 +183,7 @@ public class CharactersController : Controller
                 type = ResponseType.NotFound;
                 return Ok(ResponseHandler.GetAppResponse(type, new CharacterModel()));
             }
-            _db.DeleteCharacter(model.id??-1);
+            _db.DeleteCharacter(id);
             return Ok(ResponseHandler.GetAppResponse(type, "Удаление выполнено успешно."));
         }
         catch (Exception ex)
