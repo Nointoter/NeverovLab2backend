@@ -145,6 +145,7 @@ public class CharactersController : Controller
             {
                 return StatusCode(401, "My error message");
             }
+            
             ResponseType type = ResponseType.Success;
             User user = _db.GetUserByToken(accessToken);
             CharacterModel characterModel = _db.GetCharacterById(model.Id?? -1);
@@ -180,6 +181,7 @@ public class CharactersController : Controller
             {
                 return StatusCode(401, "My error message");
             }
+            
             ResponseType type = ResponseType.Success;
             User user = _db.GetUserByToken(accessToken);
             CharacterModel characterModel = _db.GetCharacterById(id);

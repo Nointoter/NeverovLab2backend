@@ -79,7 +79,7 @@ public class DBHelper
 
     public User GetUserByUserId(int id)
     {
-        var row = _context.Users.Where(d => d.Username.Equals(id)).FirstOrDefault();
+        var row = _context.Users.Where(d => d.Id.Equals(id)).FirstOrDefault();
         return row;
     }
     /// <summary>
@@ -272,15 +272,18 @@ public class DBHelper
     {
         List<AllTaleInfoModel> response = new List<AllTaleInfoModel>();
         var dataList = _context.Tales.ToList();
-        dataList.ForEach(row => response.Add(new AllTaleInfoModel()
+        
+        foreach(var row in dataList)
         {
-            Id = row.Id,
-            Name = row.Name,
-            Id_Master = row.Id_Master,
-            Name_Master = GetUserByUserId(row.Id_Master ?? -1).Username,
-            count_parties = row.count_parties,
-            Start_Tale = row.Start_Tale
-        }));
+            AllTaleInfoModel model = new AllTaleInfoModel();
+            model.Id = row.Id;
+            model.Name = row.Name;
+            model.Id_Master = row.Id_Master;
+            model.Name_Master = GetUserByUserId(row.Id_Master ?? -1).Username;
+            model.count_parties = row.count_parties;
+            model.Start_Tale = row.Start_Tale;
+            response.Add(model);
+        }
         return response;
     }
 

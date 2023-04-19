@@ -93,6 +93,16 @@ namespace NeverovLab2backend.Services
             return true;
         }
 
-        
+        public bool CheckTime(User user)
+        {
+            var tokenExpTicks = GetTokenExpirationTime(user.TokenExpires);
+            var tokenDate = DateTimeOffset.FromUnixTimeSeconds(tokenExpTicks).AddHours(5);
+
+            var now = DateTime.Now.ToUniversalTime();
+
+            if (DateTime.Now.Ticks > tokenDate.Ticks)
+                return false;
+            return true;
+        }
     }
 }
