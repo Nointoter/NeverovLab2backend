@@ -25,7 +25,7 @@ public class TalesController : Controller
         ResponseType type = ResponseType.Success;
         try
         {            
-            List<TaleModel> taleModels = _db.GetAllTales();
+            List<AllTaleInfoModel> taleModels = _db.GetAllTales();
             
             return Ok(ResponseHandler.GetAppResponse(type, taleModels));
         }
@@ -36,7 +36,7 @@ public class TalesController : Controller
     }
 
     [HttpGet]
-    [Route("GetTalesByIdMaster/{id}")]
+    [Route("GetTalesByIdTale/{id}")]
     public IActionResult GetTaleById(int id_tale)
     {
         ResponseType type = ResponseType.Success;

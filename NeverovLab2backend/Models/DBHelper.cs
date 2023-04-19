@@ -76,6 +76,12 @@ public class DBHelper
         var row = _context.Users.Where(d => d.Username.Equals(username)).FirstOrDefault();
         return row;
     }
+
+    public User GetUserByUserId(int id)
+    {
+        var row = _context.Users.Where(d => d.Username.Equals(id)).FirstOrDefault();
+        return row;
+    }
     /// <summary>
     /// It serves the POST/PUT/PATCH
     /// </summary>
@@ -262,18 +268,43 @@ public class DBHelper
         
     }
 
-    public List<TaleModel> GetAllTales()
+    public List<AllTaleInfoModel> GetAllTales()
     {
-        List<TaleModel> response = new List<TaleModel>();
+        List<AllTaleInfoModel> response = new List<AllTaleInfoModel>();
         var dataList = _context.Tales.ToList();
-        dataList.ForEach(row => response.Add(new TaleModel()
+        dataList.ForEach(row => response.Add(new AllTaleInfoModel()
         {
             Id = row.Id,
             Name = row.Name,
             Id_Master = row.Id_Master,
+            Name_Master = GetTaleByIdMaster(row.Id_Master ?? -1).Name,
             count_parties = row.count_parties,
             Start_Tale = row.Start_Tale
         }));
+        return response;
+    }
+
+    public List<AllCharacterInfoModel> GetAllCharactersInfo(int id)
+    {
+        List<AllCharacterInfoModel> response = new List<AllCharacterInfoModel>();
+        var dataList = _context.Sessions.ToList();
+        var character = GetCharacterById(id);
+        foreach (var row in dataList)
+        {
+            if (row.Id_Character == id)
+            {
+                response.Add(new AllCharacterInfoModel()
+                {
+                    Id = character.Id,
+                    Id_User = character.Id_User,
+                    Name_User = GetUserByUserId(id).Username,
+                    Name = character.Name,
+                    Gender = character.Gender,
+                    Race = character.Race,
+                    Name_Tale = GetTale(row.Id_Tale ?? -1).Name
+                });
+            }
+        }
         return response;
     }
     /// <summary>
