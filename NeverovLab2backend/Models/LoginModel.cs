@@ -11,5 +11,5 @@ public class LoginModel
     public string? Username { get; set; }
     public string? Password { get; set; }
     public string? RefreshToken { get; set; }
-    public string RefreshTokenExpiryTime { get; set; }//dataType
+    public string RefreshTokenExpiryTime { get; set; }
 }

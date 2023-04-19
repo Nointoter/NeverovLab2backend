@@ -37,12 +37,12 @@ public class TalesController : Controller
 
     [HttpGet]
     [Route("GetTalesByIdTale/{id}")]
-    public IActionResult GetTaleById(int id_tale)
+    public IActionResult GetTaleById(int id)
     {
         ResponseType type = ResponseType.Success;
         try
         {
-            Tale tale = _db.GetTale(id_tale);
+            Tale tale = _db.GetTale(id);
             if(tale==null)
             {
                 return BadRequest(ResponseHandler.GetAppResponse(type, "ћастер пока не придумал такую историю!"));
@@ -94,14 +94,14 @@ public class TalesController : Controller
     {
         try
         {
-            /*var accessToken = Request.Headers[HeaderNames.Authorization][0].Remove(0, 7);
+            var accessToken = Request.Headers[HeaderNames.Authorization][0].Remove(0, 7);
             var isOkToken = _tokenService.CheckToken(_db.GetUserByToken(accessToken));
             if (!isOkToken)
             {
                 return StatusCode(401, "My error message");
             }
             User user = _db.GetUserByToken(accessToken);
-            model.Id_Master = user.Id;*/
+            model.Id_Master = user.Id;
             ResponseType type = ResponseType.Success;
             _db.SaveTale(model);
             return Ok(ResponseHandler.GetAppResponse(type, model));
@@ -119,6 +119,12 @@ public class TalesController : Controller
     {
         try
         {
+            var accessToken = Request.Headers[HeaderNames.Authorization][0].Remove(0, 7);
+            var isOkToken = _tokenService.CheckToken(_db.GetUserByToken(accessToken));
+            if (!isOkToken)
+            {
+                return StatusCode(401, "My error message");
+            }
             ResponseType type = ResponseType.Success;
             _db.SaveTale(model);
             return Ok(ResponseHandler.GetAppResponse(type, model));
@@ -136,6 +142,12 @@ public class TalesController : Controller
     {
         try
         {
+            var accessToken = Request.Headers[HeaderNames.Authorization][0].Remove(0, 7);
+            var isOkToken = _tokenService.CheckToken(_db.GetUserByToken(accessToken));
+            if (!isOkToken)
+            {
+                return StatusCode(401, "My error message");
+            }
             ResponseType type = ResponseType.Success;
             _db.DeleteTale(id);
             _db.DeleteAllSession(id);

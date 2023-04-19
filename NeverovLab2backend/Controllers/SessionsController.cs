@@ -96,7 +96,13 @@ public class SessionsController : Controller
     {
         ResponseType type = ResponseType.Success;
         try
-        {                    
+        {
+            var accessToken = Request.Headers[HeaderNames.Authorization][0].Remove(0, 7);
+            var isOkToken = _tokenService.CheckToken(_db.GetUserByToken(accessToken));
+            if (!isOkToken)
+            {
+                return StatusCode(401, "My error message");
+            }
             return Ok(ResponseHandler.GetAppResponse(type, _db.GetAllCharacterByIdTale(id)));
         }
         catch (Exception ex)
