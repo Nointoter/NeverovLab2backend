@@ -42,17 +42,24 @@ public class CharactersController : Controller
             {
                 type = ResponseType.NotFound;
             }
-            List<UserCharModel> userCharModels = new List<UserCharModel>();
+            List<AllCharacterInfoModel> userCharModels = new List<AllCharacterInfoModel>();
             foreach(CharacterModel character in characterData)
             {
                 userCharModels.Add(
-                    new UserCharModel()
+                    new AllCharacterInfoModel()
                     {
                         Id = character.Id,
                         Id_User = character.Id_User,
-                        NameMember = UserData.Where(d => d.Id.Equals(character.Id_User)).FirstOrDefault().Username,
+                        Name_User = UserData.Where(d => d.Id.Equals(character.Id_User)).FirstOrDefault().Username,
                         Name =character.Name,
                         Gender= character.Gender,
+                        Gender_Name = character.Gender switch
+                        {
+                            0 => "Неизвестно",
+                            1 => "Мужчина",
+                            2 => "Женщина",
+                            3 => "Боевой вертолёт"
+                        },
                         Race = character.Race
                     }
                     ) ;

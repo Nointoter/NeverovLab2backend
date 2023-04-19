@@ -300,6 +300,13 @@ public class DBHelper
                     Name_User = GetUserByUserId(id).Username,
                     Name = character.Name,
                     Gender = character.Gender,
+                    Gender_Name = character.Gender switch
+                    {
+                        0 => "Неизвестно",
+                        1 => "Мужчина",
+                        2 => "Женщина",
+                        3 => "Боевой вертолёт"
+                    },
                     Race = character.Race,
                     Name_Tale = GetTale(row.Id_Tale ?? -1).Name
                 });

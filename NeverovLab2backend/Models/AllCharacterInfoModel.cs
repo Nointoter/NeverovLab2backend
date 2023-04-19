@@ -7,6 +7,7 @@ public class AllCharacterInfoModel
     public string? Name_User { get; set; }
     public string? Name { get; set; }
     public int? Gender { get; set; }
+    public string? Gender_Name { get; set; }
     public string? Race { get; set; }
     public string? Name_Tale { get; set; }
 }
