@@ -213,22 +213,22 @@ public class DBHelper
             if (dbTable != null)
             {
 
-                dbTable.Id = taleModel.Id;
+                
                 dbTable.Name = taleModel.Name;
                 dbTable.Id_Master = taleModel.Id_Master;
                 dbTable.count_parties = taleModel.count_parties;
-                dbTable.Start_Tale = taleModel.Start_Tale;
+                
                
             }
         }
         else
         {
             //POST
-            dbTable.Id = taleModel.Id;
+           
             dbTable.Name = taleModel.Name;
             dbTable.Id_Master = taleModel.Id_Master;
             dbTable.count_parties = taleModel.count_parties;
-            dbTable.Start_Tale = taleModel.Start_Tale;
+            dbTable.Start_Tale = Convert.ToString(DateTime.Now);
             _context.Tales.Add(dbTable);
         }
 

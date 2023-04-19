@@ -94,14 +94,14 @@ public class TalesController : Controller
     {
         try
         {
-            var accessToken = Request.Headers[HeaderNames.Authorization][0].Remove(0, 7);
+            /*var accessToken = Request.Headers[HeaderNames.Authorization][0].Remove(0, 7);
             var isOkToken = _tokenService.CheckToken(_db.GetUserByToken(accessToken));
             if (!isOkToken)
             {
                 return StatusCode(401, "My error message");
             }
             User user = _db.GetUserByToken(accessToken);
-            model.Id_Master = user.Id;
+            model.Id_Master = user.Id;*/
             ResponseType type = ResponseType.Success;
             _db.SaveTale(model);
             return Ok(ResponseHandler.GetAppResponse(type, model));

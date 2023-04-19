@@ -7,5 +7,5 @@ public class AllTaleInfoModel
     public int? Id_Master { get; set; }
     public string? Name_Master { get; set; }
     public int? count_parties { get; set; }
-    public DateTime? Start_Tale { get; set; }
+    public string? Start_Tale { get; set; }
 }

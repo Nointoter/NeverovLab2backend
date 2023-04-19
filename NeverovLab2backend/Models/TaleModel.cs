@@ -6,5 +6,5 @@ public class TaleModel
     public string? Name { get; set; }
     public int? Id_Master { get; set; }
     public int? count_parties { get; set; }
-    public DateTime? Start_Tale { get; set; }
+    public string? Start_Tale { get; set; }//преобразованный dataType
 }
