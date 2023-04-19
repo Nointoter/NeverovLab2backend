@@ -65,8 +65,8 @@ public class SessionsController : Controller
     }
 
     // DELETE 
-    [HttpDelete]
-    [Route("DeleteSession/{id}")]
+    [HttpPost]
+    [Route("DeleteSession")]
     public IActionResult Delete(SessionModel model)
     {
         ResponseType type = ResponseType.Success;
@@ -100,7 +100,7 @@ public class SessionsController : Controller
                 return Ok(ResponseHandler.GetAppResponse(type, "Удаление не выполнено"));
             }
             
-            _db.DeleteCharacter(model.Id_Character?? -1);
+            _db.DeleteUserInSession(model.Id_Character?? -1);
             return Ok(ResponseHandler.GetAppResponse(type, "Удаление выполнено успешно."));
         }
         catch (Exception ex)

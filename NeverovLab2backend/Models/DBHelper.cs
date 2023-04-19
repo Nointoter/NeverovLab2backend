@@ -382,6 +382,7 @@ public class DBHelper
                 var character = _context.Characters.Where(d => d.Id.Equals(row.Id_Character)).FirstOrDefault();
                 CharacterModel.Add(new CharacterModel()
                 {
+                    Id = character.Id,
                     Name = character.Name,
                     Race = character.Race
                 }) ;
