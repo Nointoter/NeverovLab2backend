@@ -28,7 +28,6 @@ public class AuthController : ControllerBase
     {
         try
         {
-
             UserModel user = new UserModel();
             if (!_db.CheackUserName(request.Username))
                 return BadRequest("Такой пользователь уже существует");
