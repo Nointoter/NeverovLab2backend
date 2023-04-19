@@ -29,21 +29,30 @@ public class SessionsController : Controller
         {
             var accessToken = Request.Headers[HeaderNames.Authorization][0].Remove(0, 7);
             var isOkToken = _tokenService.CheckToken(_db.GetUserByToken(accessToken));
+            var isTokenWork = _tokenService.CheckTime(_db.GetUserByToken(accessToken));
+            User user = _db.GetUserByToken(accessToken);
+            if (user == null)
+            {
+                return StatusCode(501, "Token does not exist");
+            }
+            if (!isTokenWork)
+            {
+                return StatusCode(502, "Token does not work");
+            }
             if (!isOkToken)
             {
                 return StatusCode(401, "My error message");
             }
-            User user = _db.GetUserByToken(accessToken);
             CharacterModel characterModel = _db.GetCharacterById(model.Id_Character?? -1);
             if (characterModel == null)
             {
                 type = ResponseType.NotFound;
-                return Ok(ResponseHandler.GetAppResponse(type, new CharacterModel()));
+                return Ok(ResponseHandler.GetAppResponse(type, new SessionModel()));
             }
             if (user.Id != characterModel.Id_User)
             {
                 type = ResponseType.NotFound;
-                return Ok(ResponseHandler.GetAppResponse(type, new CharacterModel()));
+                return Ok(ResponseHandler.GetAppResponse(type, new SessionModel()));
             }
             _db.SaveSession(model);
 
@@ -65,21 +74,30 @@ public class SessionsController : Controller
         {
             var accessToken = Request.Headers[HeaderNames.Authorization][0].Remove(0, 7);
             var isOkToken = _tokenService.CheckToken(_db.GetUserByToken(accessToken));
+            var isTokenWork = _tokenService.CheckTime(_db.GetUserByToken(accessToken));
+            User user = _db.GetUserByToken(accessToken);
+            if (user == null)
+            {
+                return StatusCode(501, "Token does not exist");
+            }
+            if (!isTokenWork)
+            {
+                return StatusCode(502, "Token does not work");
+            }
             if (!isOkToken)
             {
                 return StatusCode(401, "My error message");
             }
-            User user = _db.GetUserByToken(accessToken);
             CharacterModel characterModel = _db.GetCharacterById(model.Id_Character?? -1);
             if (characterModel == null)
             {
                 type = ResponseType.NotFound;
-                return Ok(ResponseHandler.GetAppResponse(type, new CharacterModel()));
+                return Ok(ResponseHandler.GetAppResponse(type, "Удаление не выполнено"));
             }
             if (user.Id != characterModel.Id_User)
             {
                 type = ResponseType.NotFound;
-                return Ok(ResponseHandler.GetAppResponse(type, new CharacterModel()));
+                return Ok(ResponseHandler.GetAppResponse(type, "Удаление не выполнено"));
             }
             
             _db.DeleteCharacter(model.Id_Character?? -1);
@@ -100,6 +118,16 @@ public class SessionsController : Controller
         {
             var accessToken = Request.Headers[HeaderNames.Authorization][0].Remove(0, 7);
             var isOkToken = _tokenService.CheckToken(_db.GetUserByToken(accessToken));
+            var isTokenWork = _tokenService.CheckTime(_db.GetUserByToken(accessToken));
+            User user = _db.GetUserByToken(accessToken);
+            if (user == null)
+            {
+                return StatusCode(501, "Token does not exist");
+            }
+            if (!isTokenWork)
+            {
+                return StatusCode(502, "Token does not work");
+            }
             if (!isOkToken)
             {
                 return StatusCode(401, "My error message");

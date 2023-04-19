@@ -82,12 +82,20 @@ public class CharactersController : Controller
         {
             var accessToken = Request.Headers[HeaderNames.Authorization][0].Remove(0, 7);
             var isOkToken = _tokenService.CheckToken(_db.GetUserByToken(accessToken));
+            var isTokenWork = _tokenService.CheckTime(_db.GetUserByToken(accessToken));
+            User user = _db.GetUserByToken(accessToken);
+            if (user == null)
+            {
+                return StatusCode(501, "Token does not exist");
+            }
+            if (!isTokenWork)
+            {
+                return StatusCode(502, "Token does not work");
+            }
             if (!isOkToken)
             {
                 return StatusCode(401, "My error message");
             }
-            
-            User user=_db.GetUserByToken(accessToken);
             CharacterModel characterModel = _db.GetCharacterById(id);
             if (characterModel == null)
             {
@@ -114,13 +122,22 @@ public class CharactersController : Controller
     {
         try
         {
-            var accessToken = Request.Headers[HeaderNames.Authorization][0].Remove(0, 7); 
+            var accessToken = Request.Headers[HeaderNames.Authorization][0].Remove(0, 7);
             var isOkToken = _tokenService.CheckToken(_db.GetUserByToken(accessToken));
+            var isTokenWork = _tokenService.CheckTime(_db.GetUserByToken(accessToken));
+            User user = _db.GetUserByToken(accessToken);
+            if (user == null)
+            {
+                return StatusCode(501, "Token does not exist");
+            }
+            if (!isTokenWork)
+            {
+                return StatusCode(502, "Token does not work");
+            }
             if (!isOkToken)
             {
                 return StatusCode(401, "My error message");
             }
-            User user = _db.GetUserByToken(accessToken);
             model.Id_User = user.Id;
             ResponseType type = ResponseType.Success;
             _db.SaveCharacter(model);
@@ -141,13 +158,23 @@ public class CharactersController : Controller
         {
             var accessToken = Request.Headers[HeaderNames.Authorization][0].Remove(0, 7);
             var isOkToken = _tokenService.CheckToken(_db.GetUserByToken(accessToken));
+            var isTokenWork = _tokenService.CheckTime(_db.GetUserByToken(accessToken));
+            User user = _db.GetUserByToken(accessToken);
+            if (user == null)
+            {
+                return StatusCode(501, "Token does not exist");
+            }
+            if (!isTokenWork)
+            {
+                return StatusCode(502, "Token does not work");
+            }
             if (!isOkToken)
             {
                 return StatusCode(401, "My error message");
             }
-            
+
             ResponseType type = ResponseType.Success;
-            User user = _db.GetUserByToken(accessToken);
+           
             CharacterModel characterModel = _db.GetCharacterById(model.Id?? -1);
             if (characterModel == null)
             {
@@ -177,13 +204,23 @@ public class CharactersController : Controller
         {
             var accessToken = Request.Headers[HeaderNames.Authorization][0].Remove(0, 7);
             var isOkToken = _tokenService.CheckToken(_db.GetUserByToken(accessToken));
+            var isTokenWork = _tokenService.CheckTime(_db.GetUserByToken(accessToken));
+            User user = _db.GetUserByToken(accessToken);
+            if (user==null)
+            {
+                return StatusCode(501, "Token does not exist");
+            }
+            if(!isTokenWork)
+            {
+                return StatusCode(502, "Token does not work");
+            }
             if (!isOkToken)
             {
                 return StatusCode(401, "My error message");
             }
             
             ResponseType type = ResponseType.Success;
-            User user = _db.GetUserByToken(accessToken);
+            
             CharacterModel characterModel = _db.GetCharacterById(id);
             if (characterModel == null)
             {

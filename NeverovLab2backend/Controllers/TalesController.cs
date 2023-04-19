@@ -64,23 +64,31 @@ public class TalesController : Controller
         {
             var accessToken = Request.Headers[HeaderNames.Authorization][0].Remove(0, 7);
             var isOkToken = _tokenService.CheckToken(_db.GetUserByToken(accessToken));
+            var isTokenWork = _tokenService.CheckTime(_db.GetUserByToken(accessToken));
+            User user = _db.GetUserByToken(accessToken);
+            if (user == null)
+            {
+                return StatusCode(501, "Token does not exist");
+            }
+            if (!isTokenWork)
+            {
+                return StatusCode(502, "Token does not work");
+            }
             if (!isOkToken)
             {
                 return StatusCode(401, "My error message");
             }
 
-            User user = _db.GetUserByToken(accessToken);
-
             var taleModel = _db.GetTalesByIdMaster(user.Id??-1);
             if (taleModel == null)
             {
                 type = ResponseType.NotFound;
-                return Ok(ResponseHandler.GetAppResponse(type, new CharacterModel()));
+                return Ok(ResponseHandler.GetAppResponse(type, new List<TaleModel>()));
             }
             if (user.Id != taleModel[0].Id_Master)
             {
                 type = ResponseType.NotFound;
-                return Ok(ResponseHandler.GetAppResponse(type, new CharacterModel()));
+                return Ok(ResponseHandler.GetAppResponse(type, new List<TaleModel>()));
             }
             return Ok(ResponseHandler.GetAppResponse(type, taleModel));
         }
@@ -99,11 +107,20 @@ public class TalesController : Controller
         {
             var accessToken = Request.Headers[HeaderNames.Authorization][0].Remove(0, 7);
             var isOkToken = _tokenService.CheckToken(_db.GetUserByToken(accessToken));
+            var isTokenWork = _tokenService.CheckTime(_db.GetUserByToken(accessToken));
+            User user = _db.GetUserByToken(accessToken);
+            if (user == null)
+            {
+                return StatusCode(501, "Token does not exist");
+            }
+            if (!isTokenWork)
+            {
+                return StatusCode(502, "Token does not work");
+            }
             if (!isOkToken)
             {
                 return StatusCode(401, "My error message");
             }
-            User user = _db.GetUserByToken(accessToken);
             model.Id_Master = user.Id;
             ResponseType type = ResponseType.Success;
             _db.SaveTale(model);
@@ -124,6 +141,16 @@ public class TalesController : Controller
         {
             var accessToken = Request.Headers[HeaderNames.Authorization][0].Remove(0, 7);
             var isOkToken = _tokenService.CheckToken(_db.GetUserByToken(accessToken));
+            var isTokenWork = _tokenService.CheckTime(_db.GetUserByToken(accessToken));
+            User user = _db.GetUserByToken(accessToken);
+            if (user == null)
+            {
+                return StatusCode(501, "Token does not exist");
+            }
+            if (!isTokenWork)
+            {
+                return StatusCode(502, "Token does not work");
+            }
             if (!isOkToken)
             {
                 return StatusCode(401, "My error message");
@@ -147,6 +174,16 @@ public class TalesController : Controller
         {
             var accessToken = Request.Headers[HeaderNames.Authorization][0].Remove(0, 7);
             var isOkToken = _tokenService.CheckToken(_db.GetUserByToken(accessToken));
+            var isTokenWork = _tokenService.CheckTime(_db.GetUserByToken(accessToken));
+            User user = _db.GetUserByToken(accessToken);
+            if (user == null)
+            {
+                return StatusCode(501, "Token does not exist");
+            }
+            if (!isTokenWork)
+            {
+                return StatusCode(502, "Token does not work");
+            }
             if (!isOkToken)
             {
                 return StatusCode(401, "My error message");

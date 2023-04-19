@@ -93,10 +93,10 @@ namespace NeverovLab2backend.Services
 
         public bool CheckTime(User user)
         {
-            var tokenExpTicks = GetTokenExpirationTime(user.TokenExpires);
-            var tokenDate = DateTimeOffset.FromUnixTimeSeconds(tokenExpTicks).AddHours(5);
+            var tokenExpTicks = Convert.ToDateTime(user.TokenExpires);
+            //var tokenDate = DateTimeOffset.FromUnixTimeSeconds(tokenExpTicks).AddHours(5);
 
-            if (DateTime.Now.Ticks > tokenDate.Ticks)
+            if (DateTime.Now.Ticks > tokenExpTicks.Ticks)
                 return false;
             return true;
         }
