@@ -79,8 +79,8 @@ public class TalesController : Controller
                 return StatusCode(401, "My error message");
             }
 
-            var taleModel = _db.GetTalesByIdMaster(user.Id??-1);
-            if (taleModel == null)
+            var taleModel = _db.GetTalesByIdMaster(user.Id ?? -1);
+            if (taleModel == null || taleModel.Count == 0)
             {
                 type = ResponseType.NotFound;
                 return Ok(ResponseHandler.GetAppResponse(type, new List<TaleModel>()));
