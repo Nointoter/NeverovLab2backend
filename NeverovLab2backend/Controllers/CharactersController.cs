@@ -107,21 +107,20 @@ public class CharactersController : Controller
     }
 
     // POST api/<CharactersController>
-    [Authorize]
     [HttpPost]
     [Route("SaveCharacter")]
     public IActionResult Post(CharacterModel model)
     {
         try
         {
-            var accessToken = Request.Headers[HeaderNames.Authorization][0].Remove(0, 7); 
+            /*var accessToken = Request.Headers[HeaderNames.Authorization][0].Remove(0, 7); 
             var isOkToken = _tokenService.CheckToken(_db.GetUserByToken(accessToken));
             if (!isOkToken)
             {
                 return StatusCode(401, "My error message");
             }
             User user = _db.GetUserByToken(accessToken);
-            model.Id_User = user.Id;
+            model.Id_User = user.Id;*/
             ResponseType type = ResponseType.Success;
             _db.SaveCharacter(model);
             return Ok(ResponseHandler.GetAppResponse(type, model));
