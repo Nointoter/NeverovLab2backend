@@ -146,6 +146,8 @@ public class DBHelper
     public CharacterModel GetCharacterById(int id)
     {
         CharacterModel response = new CharacterModel();
+        if (id == -1)
+            return response;
         var row = _context.Characters.Where(d => d.Id.Equals(id)).FirstOrDefault();
         return new CharacterModel()
         {
@@ -191,6 +193,8 @@ public class DBHelper
     /// <param name="id"></param>
     public void DeleteCharacter(int id)
     {
+        if (id == -1)
+            return;
         var order = _context.Characters.Where(d => d.Id.Equals(id)).FirstOrDefault();
         if (order != null)
         {
@@ -256,7 +260,10 @@ public class DBHelper
     public List<TaleModel> GetTalesByIdMaster(int id_master)
     {
         List<TaleModel> response = new List<TaleModel>();
+        if (id_master == -1)
+            return response; 
         var rows = _context.Tales.Where(d => d.Id_Master.Equals(id_master)).ToList();
+        
         foreach ( var row in rows )
         {
             response.Add(new TaleModel()
