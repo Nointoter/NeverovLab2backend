@@ -5,7 +5,7 @@ using System.Security.Claims;
 using NeverovLab2backend.Data;
 using NeverovLab2backend.Models.Auth;
 using System.Security.Cryptography;
-
+using Microsoft.Net.Http.Headers;
 
 namespace NeverovLab2backend.Controllers;
 
@@ -82,6 +82,39 @@ public class AuthController : ControllerBase
             Token = accessToken,
             RefreshToken = refreshToken
         });
+    }
+
+    [HttpDelete, Route("logout")]
+    public IActionResult Logout()
+    {
+        var accessToken = Request.Headers[HeaderNames.Authorization][0].Remove(0, 7);
+        User user = _db.GetUserByToken(accessToken);
+        if (user == null)
+        {
+            return StatusCode(501, "Token does not exist");
+        }
+        var isTokenWork = _tokenService.CheckTime(_db.GetUserByToken(accessToken));
+        if (!isTokenWork)
+        {
+            return StatusCode(502, "Token does not work");
+        }
+        var isOkToken = _tokenService.CheckToken(_db.GetUserByToken(accessToken));
+        if (!isOkToken)
+        {
+            return StatusCode(401, "My error message");
+        }
+
+        accessToken = null;
+        string refreshToken = null;
+
+        user.Token = accessToken;
+        user.RefreshToken = refreshToken;
+        user.TokenCreated = Convert.ToString(DateTime.Now);
+        user.TokenExpires = Convert.ToString(DateTime.Now);
+
+        _dbContext.SaveChanges();
+
+        return Ok();
     }
 
     private void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
