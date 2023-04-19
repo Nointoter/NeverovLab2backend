@@ -71,13 +71,13 @@ public class TalesController : Controller
 
             User user = _db.GetUserByToken(accessToken);
 
-            TaleModel taleModel = _db.GetTaleByIdMaster(user.Id??-1);
+            var taleModel = _db.GetTalesByIdMaster(user.Id??-1);
             if (taleModel == null)
             {
                 type = ResponseType.NotFound;
                 return Ok(ResponseHandler.GetAppResponse(type, new CharacterModel()));
             }
-            if (user.Id != taleModel.Id_Master)
+            if (user.Id != taleModel[0].Id_Master)
             {
                 type = ResponseType.NotFound;
                 return Ok(ResponseHandler.GetAppResponse(type, new CharacterModel()));

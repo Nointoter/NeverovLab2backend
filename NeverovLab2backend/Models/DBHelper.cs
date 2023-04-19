@@ -253,18 +253,22 @@ public class DBHelper
             _context.SaveChanges();
         }
     }
-    public TaleModel GetTaleByIdMaster(int id_master)
+    public List<TaleModel> GetTalesByIdMaster(int id_master)
     {
-        TaleModel response = new TaleModel();
-        var row = _context.Tales.Where(d => d.Id_Master.Equals(id_master)).FirstOrDefault();
-        return new TaleModel()
+        List<TaleModel> response = new List<TaleModel>();
+        var rows = _context.Tales.Where(d => d.Id_Master.Equals(id_master)).ToList();
+        foreach ( var row in rows )
         {
-            Id = row.Id,
-            Name = row.Name,
-            Id_Master = row.Id_Master,
-            count_parties = row.count_parties,
-            Start_Tale = row.Start_Tale
-        };
+            response.Add(new TaleModel()
+            {
+                Id = row.Id,
+                Name = row.Name,
+                Id_Master = row.Id_Master,
+                count_parties = row.count_parties,
+                Start_Tale = row.Start_Tale
+            });
+        }
+        return response;
         
     }
 
