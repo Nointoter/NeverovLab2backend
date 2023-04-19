@@ -91,7 +91,7 @@ public class SessionsController : Controller
     }
 
     [HttpGet]
-    [Route("GetSessionById/{id}")]
+    [Route("GetSessionByIdTale/{id}")]
     public IActionResult GetSession(int id)
     {
         ResponseType type = ResponseType.Success;
