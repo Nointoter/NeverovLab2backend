@@ -13,9 +13,10 @@ public class SessionsController : Controller
 {
     private readonly DBHelper _db;
     private readonly ITokenService _tokenService;
-    public SessionsController(pgDbContext pgDbContext)
+    public SessionsController(pgDbContext pgDbContext, ITokenService tokenService)
     {
         _db = new DBHelper(pgDbContext);
+        _tokenService = tokenService;
     }
 
     // POST 

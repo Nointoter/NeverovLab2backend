@@ -13,9 +13,10 @@ public class TalesController : Controller
 {
     private readonly DBHelper _db;
     private readonly ITokenService _tokenService;
-    public TalesController(pgDbContext pgDbContext)
+    public TalesController(pgDbContext pgDbContext, ITokenService tokenService)
     {
         _db = new DBHelper(pgDbContext);
+        _tokenService = tokenService;
     }
     // GET
     [HttpGet]
@@ -67,7 +68,7 @@ public class TalesController : Controller
             {
                 return StatusCode(401, "My error message");
             }
-            
+
             User user = _db.GetUserByToken(accessToken);
 
             TaleModel taleModel = _db.GetTaleByIdMaster(user.Id??-1);

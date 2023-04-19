@@ -86,8 +86,6 @@ namespace NeverovLab2backend.Services
             var tokenTicks = GetTokenExpirationTime(user.Token);
             var tokenDate = DateTimeOffset.FromUnixTimeSeconds(tokenTicks).AddHours(5);
 
-            var now = DateTime.Now.ToUniversalTime();
-
             if (DateTime.Now.Ticks > tokenDate.Ticks)
                 return false;
             return true;
@@ -97,8 +95,6 @@ namespace NeverovLab2backend.Services
         {
             var tokenExpTicks = GetTokenExpirationTime(user.TokenExpires);
             var tokenDate = DateTimeOffset.FromUnixTimeSeconds(tokenExpTicks).AddHours(5);
-
-            var now = DateTime.Now.ToUniversalTime();
 
             if (DateTime.Now.Ticks > tokenDate.Ticks)
                 return false;
