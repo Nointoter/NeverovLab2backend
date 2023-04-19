@@ -277,7 +277,7 @@ public class DBHelper
             Id = row.Id,
             Name = row.Name,
             Id_Master = row.Id_Master,
-            Name_Master = GetTaleByIdMaster(row.Id_Master ?? -1).Name,
+            Name_Master = GetUserByUserId(row.Id_Master ?? -1).Username,
             count_parties = row.count_parties,
             Start_Tale = row.Start_Tale
         }));
