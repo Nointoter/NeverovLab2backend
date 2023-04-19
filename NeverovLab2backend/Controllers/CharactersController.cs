@@ -86,6 +86,10 @@ public class CharactersController : Controller
             {
                 return StatusCode(401, "My error message");
             }
+            if()
+            {
+
+            }
             User user=_db.GetUserByToken(accessToken);
             CharacterModel characterModel = _db.GetCharacterById(id);
             if (characterModel == null)

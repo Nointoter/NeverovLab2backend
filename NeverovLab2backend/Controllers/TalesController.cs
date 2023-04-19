@@ -55,8 +55,8 @@ public class TalesController : Controller
         }
     }
     [HttpGet]
-    [Route("GetTalesByIdMaster/{id}")]
-    public IActionResult GetByIdMaster(int id)
+    [Route("GetTalesByIdMaster")]
+    public IActionResult GetByIdMaster()
     {
         ResponseType type = ResponseType.Success;
         try
@@ -67,8 +67,10 @@ public class TalesController : Controller
             {
                 return StatusCode(401, "My error message");
             }
+            
             User user = _db.GetUserByToken(accessToken);
-            TaleModel taleModel = _db.GetTaleByIdMaster(id);
+
+            TaleModel taleModel = _db.GetTaleByIdMaster(user.Id??-1);
             if (taleModel == null)
             {
                 type = ResponseType.NotFound;
